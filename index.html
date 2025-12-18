@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesquisa de Satisfação - Itaipulândia Parque Aquático</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        @keyframes wave {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-25%); }
+        }
+        .wave-bg {
+            background: linear-gradient(135deg, #3B82F6 0%, #1E3A8A 100%);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .emoji-option {
+            transition: all 0.3s ease;
+        }
+        .emoji-option:hover {
+            transform: scale(1.1);
+        }
+        .emoji-option input:checked + label {
+            background: #DBEAFE;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen">
+    <div id="app"></div>
+
+    <script>
+        class QuizItaipulandia {
+            constructor() {
+                this.currentView = 'inicio';
+                this.currentQuestion = 0;
+                this.respostas = [];
+                this.nomeCliente = '';
+                this.dataHora = '';
+                
+                this.perguntas = [
+                    {
+                        id: 1,
+                        texto: "O quanto vocês estão curtindo o parque hoje?",
+                        tipo: "emoji",
+                        opcoes: [
+                            { emoji: "😍", texto: "Muito" },
+                            { emoji: "🙂", texto: "Gostando bastante" },
+                            { emoji: "😐", texto: "Normal" },
+                            { emoji: "😕", texto: "Abaixo do esperado" }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        texto: "Qual área mais chamou atenção de vocês?",
+                        tipo: "multipla",
+                        opcoes: [
+                            "Piscinas termais",
+                            "Área infantil",
+                            "Toboáguas radicais",
+                            "Rio lento / rio selvagem",
+                            "Estrutura (bares, conforto, organização)"
+                        ]
+                    },
+                    {
+                        id: 3,
+                        texto: "Qual cidade você mora hoje?",
+                        tipo: "multipla",
+                        opcoes: [
+                            "Itaipulândia",
+                            "Foz do Iguaçu",
+                            "Medianeira",
+                            "Santa Helena",
+                            "Missal"
+                        ]
+                    },
+                    {
+                        id: 4,
+                        texto: "Se pudessem voltar sem se preocupar com ingresso, vocês viriam:",
+                        tipo: "multipla",
+                        opcoes: [
+                            "1 vez por ano",
+                            "2 a 3 vezes",
+                            "5 a 6 vezes",
+                            "Sempre que possível"
+                        ]
+                    },
+                    {
+                        id: 5,
+                        texto: "Em qual momento do ano vocês mais aproveitariam o parque?",
+                        tipo: "multipla",
+                        opcoes: [
+                            "Férias escolares",
+                            "Finais de semana",
+                            "Feriados",
+                            "O ano todo"
+                        ]
+                    },
+                    {
+                        id: 6,
+                        texto: "Quantas pessoas fazem parte da sua família hoje?",
+                        tipo: "multipla",
+                        opcoes: [
+                            "2 pessoas",
+                            "3 pessoas",
+                            "4 pessoas",
+                            "5 pessoas",
+                            "6 pessoas"
+                        ]
+                    },
+                    {
+                        id: 7,
+                        texto: "O que mais influencia na decisão de voltar ao parque?",
+                        tipo: "multipla",
+                        opcoes: [
+                            "Valor do ingresso",
+                            "Conforto e estrutura",
+                            "Opções para crianças",
+                            "Descontos em alimentação / estacionamento",
+                            "Hospedagem"
+                        ]
+                    },
+                    {
+                        id: 8,
+                        texto: "Posso te mostrar rapidamente uma opção que combina com o perfil da sua família?",
+                        tipo: "sim-nao",
+                        opcoes: ["Sim", "Agora não"]
+                    }
+                ];
+
+                this.carregarAvaliacoes();
+                this.render();
+            }
+
+            carregarAvaliacoes() {
+                const dados = localStorage.getItem('quizItaipulandia');
+                if (dados) {
+                    this.avaliacoes = JSON.parse(dados);
+                } else {
+                    this.avaliacoes = [];
+                }
+            }
+
+            salvarAvaliacao() {
+                this.avaliacoes.push({
+                    id: Date.now(),
+                    nome: this.nomeCliente,
+                    dataHora: this.dataHora,
+                    respostas: this.respostas
+                });
+                localStorage.setItem('quizItaipulandia', JSON.stringify(this.avaliacoes));
+            }
+
+            render() {
+                const app = document.getElementById('app');
+
+                if (this.currentView === 'inicio') {
+                    app.innerHTML = `
+                        <div class="min-h-screen flex items-center justify-center p-4">
+                            <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full fade-in">
+                                <div class="text-center mb-8">
+                                    <div class="text-6xl mb-4">🌊</div>
+                                    <h1 class="text-3xl font-bold text-blue-800 mb-2">Itaipulândia</h1>
+                                    <h2 class="text-xl text-blue-600">Parque Aquático</h2>
+                                    <div class="mt-4 h-1 w-20 bg-gradient-to-r from-blue-400 to-blue-600 mx-auto rounded"></div>
+                                </div>
+                                
+                                <p class="text-gray-700 text-center mb-6 text-lg">
+                                    Sua opinião é muito importante para nós! 💙
+                                </p>
+
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-gray-700 font-semibold mb-2">Qual seu nome?</label>
+                                        <input 
+                                            type="text" 
+                                            id="nomeCliente" 
+                                            placeholder="Digite seu nome"
+                                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg"
+                                        />
+                                    </div>
+                                    
+                                    <button 
+                                        onclick="app.iniciarQuiz()" 
+                                        class="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white py-4 rounded-lg text-xl font-bold hover:from-blue-600 hover:to-blue-800 transition shadow-lg"
+                                    >
+                                        Iniciar Pesquisa 🎯
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                else if (this.currentView === 'quiz') {
+                    const pergunta = this.perguntas[this.currentQuestion];
+                    const progresso = ((this.currentQuestion + 1) / this.perguntas.length) * 100;
+
+                    app.innerHTML = `
+                        <div class="min-h-screen p-4 py-8">
+                            <div class="max-w-3xl mx-auto">
+                                <!-- Header -->
+                                <div class="bg-white rounded-t-2xl shadow-lg p-6 wave-bg">
+                                    <div class="text-center text-white">
+                                        <div class="text-4xl mb-2">🌊</div>
+                                        <h2 class="text-2xl font-bold">Pesquisa de Satisfação</h2>
+                                        <p class="text-blue-100 mt-1">${this.nomeCliente}</p>
+                                    </div>
+                                </div>
+
+                                <!-- Progresso -->
+                                <div class="bg-white px-6 py-4">
+                                    <div class="flex justify-between text-sm text-gray-600 mb-2">
+                                        <span>Pergunta ${this.currentQuestion + 1} de ${this.perguntas.length}</span>
+                                        <span>${Math.round(progresso)}%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-3">
+                                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500" style="width: ${progresso}%"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Pergunta -->
+                                <div class="bg-white p-8 shadow-lg fade-in">
+                                    <h3 class="text-2xl font-bold text-gray-800 mb-6">${pergunta.texto}</h3>
+                                    
+                                    ${this.renderizarOpcoes(pergunta)}
+
+                                    <!-- Observações -->
+                                    <div class="mt-6">
+                                        <label class="block text-gray-700 font-semibold mb-2">
+                                            💭 Observações (opcional)
+                                        </label>
+                                        <textarea 
+                                            id="observacao"
+                                            rows="3"
+                                            placeholder="Deixe um comentário adicional..."
+                                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                                        ></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Botões -->
+                                <div class="bg-white rounded-b-2xl shadow-lg p-6 flex gap-4">
+                                    ${this.currentQuestion > 0 ? 
+                                        '<button onclick="app.voltarPergunta()" class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-400 transition">← Voltar</button>' 
+                                        : ''}
+                                    <button 
+                                        onclick="app.proximaPergunta()" 
+                                        class="flex-1 bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 rounded-lg font-bold hover:from-blue-600 hover:to-blue-800 transition"
+                                    >
+                                        ${this.currentQuestion === this.perguntas.length - 1 ? 'Finalizar ✓' : 'Próxima →'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                else if (this.currentView === 'final') {
+                    app.innerHTML = `
+                        <div class="min-h-screen flex items-center justify-center p-4">
+                            <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center fade-in">
+                                <div class="text-7xl mb-6">🎉</div>
+                                <h2 class="text-3xl font-bold text-blue-800 mb-4">Obrigado!</h2>
+                                <p class="text-xl text-gray-700 mb-6">
+                                    Sua avaliação foi registrada com sucesso, ${this.nomeCliente}!
+                                </p>
+                                <p class="text-gray-600 mb-8">
+                                    Sua opinião é muito importante para continuarmos melhorando. 💙
+                                </p>
+                                <button 
+                                    onclick="app.novaAvaliacao()" 
+                                    class="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white py-4 rounded-lg text-xl font-bold hover:from-blue-600 hover:to-blue-800 transition"
+                                >
+                                    Nova Avaliação
+                                </button>
+                                <button 
+                                    onclick="app.verPainel()" 
+                                    class="w-full mt-3 bg-gray-200 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-300 transition"
+                                >
+                                    📊 Ver Painel Administrativo
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                else if (this.currentView === 'painel') {
+                    this.renderPainel();
+                }
+            }
+
+            renderizarOpcoes(pergunta) {
+                if (pergunta.tipo === 'emoji') {
+                    return `
+                        <div class="grid grid-cols-2 gap-4">
+                            ${pergunta.opcoes.map((op, i) => `
+                                <div class="emoji-option">
+                                    <input type="radio" id="opt${i}" name="resposta" value="${op.texto}" class="hidden">
+                                    <label for="opt${i}" class="cursor-pointer block p-6 border-2 border-gray-200 rounded-xl hover:border-blue-400 transition text-center">
+                                        <div class="text-5xl mb-3">${op.emoji}</div>
+                                        <div class="font-semibold text-gray-700">${op.texto}</div>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="space-y-3">
+                        ${pergunta.opcoes.map((op, i) => `
+                            <div class="emoji-option">
+                                <input type="radio" id="opt${i}" name="resposta" value="${op}" class="hidden">
+                                <label for="opt${i}" class="cursor-pointer block p-4 border-2 border-gray-200 rounded-lg hover:border-blue-400 transition">
+                                    <div class="flex items-center">
+                                        <div class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                            <div class="w-3 h-3 bg-blue-600 rounded-full hidden peer-checked:block"></div>
+                                        </div>
+                                        <span class="font-semibold text-gray-700 text-lg">${op}</span>
+                                    </div>
+                                </label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            iniciarQuiz() {
+                const nome = document.getElementById('nomeCliente')?.value.trim();
+                if (!nome) {
+                    alert('Por favor, digite seu nome!');
+                    return;
+                }
+                this.nomeCliente = nome;
+                this.dataHora = new Date().toLocaleString('pt-BR');
+                this.currentView = 'quiz';
+                this.render();
+            }
+
+            proximaPergunta() {
+                const resposta = document.querySelector('input[name="resposta"]:checked');
+                if (!resposta) {
+                    alert('Por favor, selecione uma resposta!');
+                    return;
+                }
+
+                const observacao = document.getElementById('observacao')?.value || '';
+                
+                this.respostas[this.currentQuestion] = {
+                    pergunta: this.perguntas[this.currentQuestion].texto,
+                    resposta: resposta.value,
+                    observacao: observacao
+                };
+
+                if (this.currentQuestion === this.perguntas.length - 1) {
+                    this.salvarAvaliacao();
+                    this.currentView = 'final';
+                } else {
+                    this.currentQuestion++;
+                }
+
+                this.render();
+            }
+
+            voltarPergunta() {
+                this.currentQuestion--;
+                this.render();
+            }
+
+            novaAvaliacao() {
+                this.currentView = 'inicio';
+                this.currentQuestion = 0;
+                this.respostas = [];
+                this.nomeCliente = '';
+                this.dataHora = '';
+                this.render();
+            }
+
+            verPainel() {
+                this.currentView = 'painel';
+                this.render();
+            }
+
+            renderPainel() {
+                const app = document.getElementById('app');
+                
+                app.innerHTML = `
+                    <div class="min-h-screen p-4 py-8">
+                        <div class="max-w-6xl mx-auto">
+                            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                                <div class="wave-bg p-6 text-white">
+                                    <h1 class="text-3xl font-bold mb-2">📊 Painel Administrativo</h1>
+                                    <p class="text-blue-100">Itaipulândia Parque Aquático</p>
+                                </div>
+
+                                <div class="p-6">
+                                    <div class="flex gap-4 mb-6">
+                                        <button 
+                                            onclick="app.exportarExcel()" 
+                                            class="bg-green-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-700 transition"
+                                        >
+                                            📥 Exportar para Excel
+                                        </button>
+                                        <button 
+                                            onclick="app.novaAvaliacao()" 
+                                            class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition"
+                                        >
+                                            ← Voltar para Pesquisa
+                                        </button>
+                                    </div>
+
+                                    <div class="bg-blue-50 p-6 rounded-lg mb-6">
+                                        <h3 class="text-2xl font-bold text-blue-800 mb-2">Total de Avaliações: ${this.avaliacoes.length}</h3>
+                                    </div>
+
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full">
+                                            <thead class="bg-blue-600 text-white">
+                                                <tr>
+                                                    <th class="px-4 py-3 text-left">Nome</th>
+                                                    <th class="px-4 py-3 text-left">Data/Hora</th>
+                                                    <th class="px-4 py-3 text-left">Satisfação</th>
+                                                    <th class="px-4 py-3 text-left">Ações</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${this.avaliacoes.slice().reverse().map((av, i) => `
+                                                    <tr class="border-b ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50">
+                                                        <td class="px-4 py-3 font-semibold">${av.nome}</td>
+                                                        <td class="px-4 py-3">${av.dataHora}</td>
+                                                        <td class="px-4 py-3">${av.respostas[0]?.resposta || 'N/A'}</td>
+                                                        <td class="px-4 py-3">
+                                                            <button onclick="app.verDetalhes(${av.id})" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">👁️ Ver</button>
+                                                        </td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            exportarExcel() {
+                const dados = this.avaliacoes.map(av => {
+                    const linha = {
+                        'Nome': av.nome,
+                        'Data/Hora': av.dataHora
+                    };
+
+                    av.respostas.forEach((resp, i) => {
+                        linha[`P${i + 1} - ${resp.pergunta.substring(0, 30)}...`] = resp.resposta;
+                        if (resp.observacao) {
+                            linha[`P${i + 1} - Observação`] = resp.observacao;
+                        }
+                    });
+
+                    return linha;
+                });
+
+                const ws = XLSX.utils.json_to_sheet(dados);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Avaliacoes');
+                
+                XLSX.writeFile(wb, `Pesquisa_Itaipulandia_${new Date().toISOString().split('T')[0]}.xlsx`);
+            }
+
+            verDetalhes(id) {
+                const av = this.avaliacoes.find(a => a.id === id);
+                if (!av) return;
+
+                const modal = `
+                    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onclick="this.remove()">
+                        <div class="bg-white rounded-xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+                            <h2 class="text-2xl font-bold text-blue-800 mb-4">Detalhes da Avaliação</h2>
+                            <p class="text-gray-700 mb-2"><strong>Nome:</strong> ${av.nome}</p>
+                            <p class="text-gray-700 mb-6"><strong>Data/Hora:</strong> ${av.dataHora}</p>
+                            
+                            ${av.respostas.map((resp, i) => `
+                                <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+                                    <p class="font-bold text-blue-800 mb-2">${i + 1}. ${resp.pergunta}</p>
+                                    <p class="text-gray-800 mb-2">✓ ${resp.resposta}</p>
+                                    ${resp.observacao ? `<p class="text-gray-600 italic">💭 ${resp.observacao}</p>` : ''}
+                                </div>
+                            `).join('')}
+                            
+                            <button onclick="this.closest('.fixed').remove()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700">
+                                Fechar
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', modal);
+            }
+        }
+
+        const app = new QuizItaipulandia();
+    </script>
+</body>
+</html>
