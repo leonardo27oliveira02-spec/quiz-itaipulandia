@@ -4,13 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pesquisa de Satisfação - Itaipulândia Parque Aquático</title>
+    
+    <!-- Favicon e ícones PWA -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🦕</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🦕</text></svg>">
+    
+    <meta name="theme-color" content="#3B82F6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Quiz Itaipulândia">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        @keyframes wave {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(-25%); }
-        }
         .wave-bg {
             background: linear-gradient(135deg, #3B82F6 0%, #1E3A8A 100%);
         }
@@ -21,16 +27,14 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .emoji-option {
-            transition: all 0.3s ease;
-        }
-        .emoji-option:hover {
-            transform: scale(1.1);
-        }
-        .emoji-option input:checked + label {
+        .option-item input:checked + label {
             background: #DBEAFE;
             border-color: #3B82F6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        .option-item:hover label {
+            border-color: #60A5FA;
+            background: #EFF6FF;
         }
     </style>
 </head>
@@ -45,94 +49,90 @@
                 this.respostas = [];
                 this.nomeCliente = '';
                 this.dataHora = '';
+                this.avaliacoes = [];
                 
                 this.perguntas = [
                     {
                         id: 1,
-                        texto: "O quanto vocês estão curtindo o parque hoje?",
-                        tipo: "emoji",
+                        emoji: "🦖",
+                        texto: "Como está sendo a experiência de vocês no parque hoje?",
                         opcoes: [
-                            { emoji: "😍", texto: "Muito" },
-                            { emoji: "🙂", texto: "Gostando bastante" },
-                            { emoji: "😐", texto: "Normal" },
+                            { emoji: "😍", texto: "Muito boa" },
+                            { emoji: "🙂", texto: "Boa" },
+                            { emoji: "😐", texto: "Mais ou menos" },
                             { emoji: "😕", texto: "Abaixo do esperado" }
                         ]
                     },
                     {
                         id: 2,
-                        texto: "Qual área mais chamou atenção de vocês?",
-                        tipo: "multipla",
+                        emoji: "🦕",
+                        texto: "O que mais chamou a atenção de vocês no parque até agora?",
                         opcoes: [
-                            "Piscinas termais",
-                            "Área infantil",
-                            "Toboáguas radicais",
-                            "Rio lento / rio selvagem",
-                            "Estrutura (bares, conforto, organização)"
+                            { emoji: "🌊", texto: "Piscinas de ondas" },
+                            { emoji: "👶", texto: "Área infantil" },
+                            { emoji: "🎢", texto: "Toboáguas radicais" },
+                            { emoji: "🛟", texto: "Rio lento / rio selvagem" },
+                            { emoji: "🏖️", texto: "Estrutura (bares, conforto, organização)" },
+                            { emoji: "✨", texto: "Outros" }
                         ]
                     },
                     {
                         id: 3,
-                        texto: "Qual cidade você mora hoje?",
-                        tipo: "multipla",
+                        emoji: "📍",
+                        texto: "Em qual cidade você mora atualmente?",
                         opcoes: [
-                            "Itaipulândia",
-                            "Foz do Iguaçu",
-                            "Medianeira",
-                            "Santa Helena",
-                            "Missal"
+                            { emoji: "🏡", texto: "Itaipulândia" },
+                            { emoji: "🌆", texto: "Foz do Iguaçu" },
+                            { emoji: "🛣️", texto: "Medianeira" },
+                            { emoji: "🌅", texto: "Santa Helena" },
+                            { emoji: "🌳", texto: "Missal" },
+                            { emoji: "🌎", texto: "Outra" }
                         ]
                     },
                     {
                         id: 4,
-                        texto: "Se pudessem voltar sem se preocupar com ingresso, vocês viriam:",
-                        tipo: "multipla",
+                        emoji: "🦖",
+                        texto: "Se você pudesse vir ao parque sem pagar ingresso, quantas vezes viria por ano?",
                         opcoes: [
-                            "1 vez por ano",
-                            "2 a 3 vezes",
-                            "5 a 6 vezes",
-                            "Sempre que possível"
+                            { emoji: "1️⃣", texto: "1 vez por ano" },
+                            { emoji: "🔁", texto: "2 a 3 vezes" },
+                            { emoji: "📆", texto: "5 a 6 vezes" },
+                            { emoji: "♾️", texto: "Sempre que pudesse" }
                         ]
                     },
                     {
                         id: 5,
-                        texto: "Em qual momento do ano vocês mais aproveitariam o parque?",
-                        tipo: "multipla",
+                        emoji: "🏨",
+                        texto: "Você já conhece o resort ou já se hospedou aqui alguma vez?",
                         opcoes: [
-                            "Férias escolares",
-                            "Finais de semana",
-                            "Feriados",
-                            "O ano todo"
+                            { emoji: "✅", texto: "Sim, já me hospedei" },
+                            { emoji: "👀", texto: "Conheço, mas nunca me hospedei" },
+                            { emoji: "❌", texto: "Ainda não conheço" }
                         ]
                     },
                     {
                         id: 6,
-                        texto: "Quantas pessoas fazem parte da sua família hoje?",
-                        tipo: "multipla",
+                        emoji: "👨‍👩‍👧‍👦",
+                        texto: "Quantas pessoas vieram com você hoje ao parque?",
                         opcoes: [
-                            "2 pessoas",
-                            "3 pessoas",
-                            "4 pessoas",
-                            "5 pessoas",
-                            "6 pessoas"
+                            { emoji: "2️⃣", texto: "2 pessoas" },
+                            { emoji: "3️⃣", texto: "3 pessoas" },
+                            { emoji: "4️⃣", texto: "4 pessoas" },
+                            { emoji: "5️⃣", texto: "5 pessoas" },
+                            { emoji: "6️⃣", texto: "6 pessoas" }
                         ]
                     },
                     {
                         id: 7,
-                        texto: "O que mais influencia na decisão de voltar ao parque?",
-                        tipo: "multipla",
+                        emoji: "🦕",
+                        texto: "O que mais te impede de voltar mais vezes ao parque durante o ano?",
                         opcoes: [
-                            "Valor do ingresso",
-                            "Conforto e estrutura",
-                            "Opções para crianças",
-                            "Descontos em alimentação / estacionamento",
-                            "Hospedagem"
+                            { emoji: "💰", texto: "Valor do ingresso" },
+                            { emoji: "⏰", texto: "Falta de tempo" },
+                            { emoji: "📅", texto: "Distância / planejamento" },
+                            { emoji: "🍔", texto: "Gastos com alimentação e estacionamento" },
+                            { emoji: "❓", texto: "Outros" }
                         ]
-                    },
-                    {
-                        id: 8,
-                        texto: "Posso te mostrar rapidamente uma opção que combina com o perfil da sua família?",
-                        tipo: "sim-nao",
-                        opcoes: ["Sim", "Agora não"]
                     }
                 ];
 
@@ -167,7 +167,7 @@
                         <div class="min-h-screen flex items-center justify-center p-4">
                             <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full fade-in">
                                 <div class="text-center mb-8">
-                                    <div class="text-6xl mb-4">🌊</div>
+                                    <div class="text-6xl mb-4">🦕</div>
                                     <h1 class="text-3xl font-bold text-blue-800 mb-2">Itaipulândia</h1>
                                     <h2 class="text-xl text-blue-600">Parque Aquático</h2>
                                     <div class="mt-4 h-1 w-20 bg-gradient-to-r from-blue-400 to-blue-600 mx-auto rounded"></div>
@@ -210,7 +210,7 @@
                                 <!-- Header -->
                                 <div class="bg-white rounded-t-2xl shadow-lg p-6 wave-bg">
                                     <div class="text-center text-white">
-                                        <div class="text-4xl mb-2">🌊</div>
+                                        <div class="text-4xl mb-2">🦕</div>
                                         <h2 class="text-2xl font-bold">Pesquisa de Satisfação</h2>
                                         <p class="text-blue-100 mt-1">${this.nomeCliente}</p>
                                     </div>
@@ -229,9 +229,24 @@
 
                                 <!-- Pergunta -->
                                 <div class="bg-white p-8 shadow-lg fade-in">
-                                    <h3 class="text-2xl font-bold text-gray-800 mb-6">${pergunta.texto}</h3>
+                                    <div class="flex items-center gap-3 mb-6">
+                                        <div class="text-4xl">${pergunta.emoji}</div>
+                                        <h3 class="text-2xl font-bold text-gray-800">${this.currentQuestion + 1}. ${pergunta.texto}</h3>
+                                    </div>
                                     
-                                    ${this.renderizarOpcoes(pergunta)}
+                                    <div class="space-y-3">
+                                        ${pergunta.opcoes.map((op, i) => `
+                                            <div class="option-item">
+                                                <input type="radio" id="opt${i}" name="resposta" value="${op.texto}" class="hidden">
+                                                <label for="opt${i}" class="cursor-pointer block p-4 border-2 border-gray-200 rounded-lg hover:border-blue-400 transition">
+                                                    <div class="flex items-center">
+                                                        <span class="text-2xl mr-3">${op.emoji}</span>
+                                                        <span class="font-semibold text-gray-700 text-lg">${op.texto}</span>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        `).join('')}
+                                    </div>
 
                                     <!-- Observações -->
                                     <div class="mt-6">
@@ -298,42 +313,6 @@
                 }
             }
 
-            renderizarOpcoes(pergunta) {
-                if (pergunta.tipo === 'emoji') {
-                    return `
-                        <div class="grid grid-cols-2 gap-4">
-                            ${pergunta.opcoes.map((op, i) => `
-                                <div class="emoji-option">
-                                    <input type="radio" id="opt${i}" name="resposta" value="${op.texto}" class="hidden">
-                                    <label for="opt${i}" class="cursor-pointer block p-6 border-2 border-gray-200 rounded-xl hover:border-blue-400 transition text-center">
-                                        <div class="text-5xl mb-3">${op.emoji}</div>
-                                        <div class="font-semibold text-gray-700">${op.texto}</div>
-                                    </label>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                }
-
-                return `
-                    <div class="space-y-3">
-                        ${pergunta.opcoes.map((op, i) => `
-                            <div class="emoji-option">
-                                <input type="radio" id="opt${i}" name="resposta" value="${op}" class="hidden">
-                                <label for="opt${i}" class="cursor-pointer block p-4 border-2 border-gray-200 rounded-lg hover:border-blue-400 transition">
-                                    <div class="flex items-center">
-                                        <div class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
-                                            <div class="w-3 h-3 bg-blue-600 rounded-full hidden peer-checked:block"></div>
-                                        </div>
-                                        <span class="font-semibold text-gray-700 text-lg">${op}</span>
-                                    </div>
-                                </label>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            }
-
             iniciarQuiz() {
                 const nome = document.getElementById('nomeCliente')?.value.trim();
                 if (!nome) {
@@ -398,12 +377,17 @@
                         <div class="max-w-6xl mx-auto">
                             <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
                                 <div class="wave-bg p-6 text-white">
-                                    <h1 class="text-3xl font-bold mb-2">📊 Painel Administrativo</h1>
-                                    <p class="text-blue-100">Itaipulândia Parque Aquático</p>
+                                    <div class="flex items-center gap-3">
+                                        <div class="text-5xl">🦕</div>
+                                        <div>
+                                            <h1 class="text-3xl font-bold mb-1">📊 Painel Administrativo</h1>
+                                            <p class="text-blue-100">Itaipulândia Parque Aquático</p>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="p-6">
-                                    <div class="flex gap-4 mb-6">
+                                    <div class="flex gap-4 mb-6 flex-wrap">
                                         <button 
                                             onclick="app.exportarExcel()" 
                                             class="bg-green-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-green-700 transition"
@@ -416,36 +400,45 @@
                                         >
                                             ← Voltar para Pesquisa
                                         </button>
+                                        <button 
+                                            onclick="app.limparDados()" 
+                                            class="bg-red-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-red-700 transition"
+                                        >
+                                            🗑️ Limpar Dados
+                                        </button>
                                     </div>
 
                                     <div class="bg-blue-50 p-6 rounded-lg mb-6">
-                                        <h3 class="text-2xl font-bold text-blue-800 mb-2">Total de Avaliações: ${this.avaliacoes.length}</h3>
+                                        <h3 class="text-2xl font-bold text-blue-800 mb-2">📊 Total de Avaliações: ${this.avaliacoes.length}</h3>
                                     </div>
 
-                                    <div class="overflow-x-auto">
-                                        <table class="w-full">
-                                            <thead class="bg-blue-600 text-white">
-                                                <tr>
-                                                    <th class="px-4 py-3 text-left">Nome</th>
-                                                    <th class="px-4 py-3 text-left">Data/Hora</th>
-                                                    <th class="px-4 py-3 text-left">Satisfação</th>
-                                                    <th class="px-4 py-3 text-left">Ações</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                ${this.avaliacoes.slice().reverse().map((av, i) => `
-                                                    <tr class="border-b ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50">
-                                                        <td class="px-4 py-3 font-semibold">${av.nome}</td>
-                                                        <td class="px-4 py-3">${av.dataHora}</td>
-                                                        <td class="px-4 py-3">${av.respostas[0]?.resposta || 'N/A'}</td>
-                                                        <td class="px-4 py-3">
-                                                            <button onclick="app.verDetalhes(${av.id})" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">👁️ Ver</button>
-                                                        </td>
+                                    ${this.avaliacoes.length === 0 ? 
+                                        '<div class="text-center py-12 text-gray-500 text-xl">Nenhuma avaliação registrada ainda</div>' :
+                                        `<div class="overflow-x-auto">
+                                            <table class="w-full">
+                                                <thead class="bg-blue-600 text-white">
+                                                    <tr>
+                                                        <th class="px-4 py-3 text-left">Nome</th>
+                                                        <th class="px-4 py-3 text-left">Data/Hora</th>
+                                                        <th class="px-4 py-3 text-left">Experiência</th>
+                                                        <th class="px-4 py-3 text-left">Ações</th>
                                                     </tr>
-                                                `).join('')}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                </thead>
+                                                <tbody>
+                                                    ${this.avaliacoes.slice().reverse().map((av, i) => `
+                                                        <tr class="border-b ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50">
+                                                            <td class="px-4 py-3 font-semibold">${av.nome}</td>
+                                                            <td class="px-4 py-3">${av.dataHora}</td>
+                                                            <td class="px-4 py-3">${av.respostas[0]?.resposta || 'N/A'}</td>
+                                                            <td class="px-4 py-3">
+                                                                <button onclick="app.verDetalhes(${av.id})" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 font-semibold">👁️ Ver Detalhes</button>
+                                                            </td>
+                                                        </tr>
+                                                    `).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>`
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -454,6 +447,11 @@
             }
 
             exportarExcel() {
+                if (this.avaliacoes.length === 0) {
+                    alert('Não há avaliações para exportar!');
+                    return;
+                }
+
                 const dados = this.avaliacoes.map(av => {
                     const linha = {
                         'Nome': av.nome,
@@ -461,9 +459,9 @@
                     };
 
                     av.respostas.forEach((resp, i) => {
-                        linha[`P${i + 1} - ${resp.pergunta.substring(0, 30)}...`] = resp.resposta;
+                        linha[`P${i + 1}`] = resp.resposta;
                         if (resp.observacao) {
-                            linha[`P${i + 1} - Observação`] = resp.observacao;
+                            linha[`P${i + 1} - Obs`] = resp.observacao;
                         }
                     });
 
@@ -477,6 +475,17 @@
                 XLSX.writeFile(wb, `Pesquisa_Itaipulandia_${new Date().toISOString().split('T')[0]}.xlsx`);
             }
 
+            limparDados() {
+                if (confirm('⚠️ ATENÇÃO! Isso vai apagar TODAS as avaliações. Deseja continuar?')) {
+                    if (confirm('Tem certeza absoluta? Esta ação não pode ser desfeita!')) {
+                        this.avaliacoes = [];
+                        localStorage.removeItem('quizItaipulandia');
+                        alert('✅ Dados limpos com sucesso!');
+                        this.render();
+                    }
+                }
+            }
+
             verDetalhes(id) {
                 const av = this.avaliacoes.find(a => a.id === id);
                 if (!av) return;
@@ -484,15 +493,18 @@
                 const modal = `
                     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onclick="this.remove()">
                         <div class="bg-white rounded-xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
-                            <h2 class="text-2xl font-bold text-blue-800 mb-4">Detalhes da Avaliação</h2>
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="text-4xl">🦕</div>
+                                <h2 class="text-2xl font-bold text-blue-800">Detalhes da Avaliação</h2>
+                            </div>
                             <p class="text-gray-700 mb-2"><strong>Nome:</strong> ${av.nome}</p>
                             <p class="text-gray-700 mb-6"><strong>Data/Hora:</strong> ${av.dataHora}</p>
                             
                             ${av.respostas.map((resp, i) => `
                                 <div class="mb-6 p-4 bg-blue-50 rounded-lg">
                                     <p class="font-bold text-blue-800 mb-2">${i + 1}. ${resp.pergunta}</p>
-                                    <p class="text-gray-800 mb-2">✓ ${resp.resposta}</p>
-                                    ${resp.observacao ? `<p class="text-gray-600 italic">💭 ${resp.observacao}</p>` : ''}
+                                    <p class="text-gray-800 mb-2"><strong>Resposta:</strong> ${resp.resposta}</p>
+                                    ${resp.observacao ? `<p class="text-gray-600 italic mt-2"><strong>Observação:</strong> ${resp.observacao}</p>` : ''}
                                 </div>
                             `).join('')}
                             
