@@ -3,49 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pesquisa de Satisfação - Itaipulândia Parque Aquático</title>
-    
-    <!-- Favicon e ícones PWA -->
+    <title>Pesquisa de Satisfação - Itaipulândia</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🦕</text></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🦕</text></svg>">
-    
-    <meta name="theme-color" content="#3B82F6">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Quiz Itaipulândia">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        .wave-bg {
-            background: linear-gradient(135deg, #3B82F6 0%, #1E3A8A 100%);
-        }
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
+        .wave-bg { background: linear-gradient(135deg, #3B82F6 0%, #1E3A8A 100%); }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .option-item input:checked + label {
+        .option-item input:checked + label, .checkbox-item input:checked + label {
             background: #DBEAFE;
             border-color: #3B82F6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
         }
-        .option-item:hover label {
+        .option-item:hover label, .checkbox-item:hover label {
             border-color: #60A5FA;
             background: #EFF6FF;
-        }
-        .checkbox-item input:checked + label {
-            background: #DBEAFE;
-            border-color: #3B82F6;
-        }
-        .checkbox-item:hover label {
-            border-color: #60A5FA;
-            background: #EFF6FF;
-        }
-        @media print {
-            .no-print { display: none !important; }
         }
     </style>
 </head>
@@ -162,8 +138,6 @@
                 const dados = localStorage.getItem('quizItaipulandia');
                 if (dados) {
                     this.avaliacoes = JSON.parse(dados);
-                } else {
-                    this.avaliacoes = [];
                 }
             }
 
@@ -193,55 +167,30 @@
                                     <div class="mt-4 h-1 w-20 bg-gradient-to-r from-blue-400 to-blue-600 mx-auto rounded"></div>
                                 </div>
                                 
-                                <p class="text-gray-700 text-center mb-6 text-lg">
-                                    Sua opinião é muito importante para nós! 💙
-                                </p>
+                                <p class="text-gray-700 text-center mb-6 text-lg">Sua opinião é muito importante! 💙</p>
 
                                 <div class="space-y-4">
                                     <div>
                                         <label class="block text-gray-700 font-semibold mb-2">Nome completo</label>
-                                        <input 
-                                            type="text" 
-                                            id="nomeCliente" 
-                                            placeholder="Digite seu nome"
-                                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg"
-                                        />
+                                        <input type="text" id="nomeCliente" placeholder="Digite seu nome" class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg" />
                                     </div>
-
                                     <div>
                                         <label class="block text-gray-700 font-semibold mb-2">Cidade</label>
-                                        <input 
-                                            type="text" 
-                                            id="cidadeCliente" 
-                                            placeholder="Qual sua cidade?"
-                                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg"
-                                        />
+                                        <input type="text" id="cidadeCliente" placeholder="Qual sua cidade?" class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg" />
                                     </div>
-
                                     <div>
                                         <label class="block text-gray-700 font-semibold mb-2">Modelo de estadia</label>
-                                        <select 
-                                            id="modeloEstadia" 
-                                            class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg"
-                                        >
+                                        <select id="modeloEstadia" class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg">
                                             <option value="">Selecione...</option>
                                             <option value="Hóspede">Hóspede</option>
                                             <option value="Sócio">Sócio</option>
                                             <option value="Day Use">Day Use</option>
                                         </select>
                                     </div>
-                                    
-                                    <button 
-                                        onclick="app.iniciarQuiz()" 
-                                        class="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white py-4 rounded-lg text-xl font-bold hover:from-blue-600 hover:to-blue-800 transition shadow-lg"
-                                    >
+                                    <button onclick="app.iniciarQuiz()" class="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white py-4 rounded-lg text-xl font-bold hover:from-blue-600 hover:to-blue-800 transition shadow-lg">
                                         Iniciar Pesquisa 🎯
                                     </button>
-
-                                    <button 
-                                        onclick="app.verPainel()" 
-                                        class="w-full bg-gray-700 text-white py-3 rounded-lg text-lg font-bold hover:bg-gray-800 transition"
-                                    >
+                                    <button onclick="app.verPainel()" class="w-full bg-gray-700 text-white py-3 rounded-lg text-lg font-bold hover:bg-gray-800 transition">
                                         📊 Painel Administrativo
                                     </button>
                                 </div>
@@ -257,7 +206,6 @@
                     app.innerHTML = `
                         <div class="min-h-screen p-4 py-8">
                             <div class="max-w-3xl mx-auto">
-                                <!-- Header -->
                                 <div class="bg-white rounded-t-2xl shadow-lg p-6 wave-bg">
                                     <div class="text-center text-white">
                                         <div class="text-4xl mb-2">🦕</div>
@@ -265,8 +213,6 @@
                                         <p class="text-blue-100 mt-1">${this.nomeCliente} - ${this.cidadeCliente}</p>
                                     </div>
                                 </div>
-
-                                <!-- Progresso -->
                                 <div class="bg-white px-6 py-4">
                                     <div class="flex justify-between text-sm text-gray-600 mb-2">
                                         <span>Pergunta ${this.currentQuestion + 1} de ${this.perguntas.length}</span>
@@ -276,39 +222,20 @@
                                         <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500" style="width: ${progresso}%"></div>
                                     </div>
                                 </div>
-
-                                <!-- Pergunta -->
                                 <div class="bg-white p-8 shadow-lg fade-in">
                                     <div class="flex items-center gap-3 mb-6">
                                         <div class="text-4xl">${pergunta.emoji}</div>
                                         <h3 class="text-2xl font-bold text-gray-800">${this.currentQuestion + 1}. ${pergunta.texto}</h3>
                                     </div>
-                                    
                                     ${this.renderizarOpcoes(pergunta)}
-
-                                    <!-- Observações -->
                                     <div class="mt-6">
-                                        <label class="block text-gray-700 font-semibold mb-2">
-                                            💭 Observações (opcional)
-                                        </label>
-                                        <textarea 
-                                            id="observacao"
-                                            rows="3"
-                                            placeholder="Deixe um comentário adicional..."
-                                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
-                                        ></textarea>
+                                        <label class="block text-gray-700 font-semibold mb-2">💭 Observações (opcional)</label>
+                                        <textarea id="observacao" rows="3" placeholder="Deixe um comentário..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"></textarea>
                                     </div>
                                 </div>
-
-                                <!-- Botões -->
                                 <div class="bg-white rounded-b-2xl shadow-lg p-6 flex gap-4">
-                                    ${this.currentQuestion > 0 ? 
-                                        '<button onclick="app.voltarPergunta()" class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-400 transition">← Voltar</button>' 
-                                        : ''}
-                                    <button 
-                                        onclick="app.proximaPergunta()" 
-                                        class="flex-1 bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 rounded-lg font-bold hover:from-blue-600 hover:to-blue-800 transition"
-                                    >
+                                    ${this.currentQuestion > 0 ? '<button onclick="app.voltarPergunta()" class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-400 transition">← Voltar</button>' : ''}
+                                    <button onclick="app.proximaPergunta()" class="flex-1 bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 rounded-lg font-bold hover:from-blue-600 hover:to-blue-800 transition">
                                         ${this.currentQuestion === this.perguntas.length - 1 ? 'Finalizar ✓' : 'Próxima →'}
                                     </button>
                                 </div>
@@ -323,16 +250,9 @@
                             <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center fade-in">
                                 <div class="text-7xl mb-6">🎉</div>
                                 <h2 class="text-3xl font-bold text-blue-800 mb-4">Obrigado!</h2>
-                                <p class="text-xl text-gray-700 mb-6">
-                                    Sua avaliação foi registrada com sucesso, ${this.nomeCliente}!
-                                </p>
-                                <p class="text-gray-600 mb-8">
-                                    Sua opinião é muito importante para continuarmos melhorando. 💙
-                                </p>
-                                <button 
-                                    onclick="app.novaAvaliacao()" 
-                                    class="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white py-4 rounded-lg text-xl font-bold hover:from-blue-600 hover:to-blue-800 transition"
-                                >
+                                <p class="text-xl text-gray-700 mb-6">Sua avaliação foi registrada, ${this.nomeCliente}!</p>
+                                <p class="text-gray-600 mb-8">Sua opinião é muito importante! 💙</p>
+                                <button onclick="app.novaAvaliacao()" class="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white py-4 rounded-lg text-xl font-bold hover:from-blue-600 hover:to-blue-800 transition">
                                     Nova Avaliação
                                 </button>
                             </div>
@@ -352,7 +272,7 @@
                             ${pergunta.opcoes.map((op, i) => `
                                 <div class="option-item">
                                     <input type="radio" id="opt${i}" name="resposta" value="${op.texto}" class="hidden">
-                                    <label for="opt${i}" class="cursor-pointer block p-4 border-2 border-gray-200 rounded-lg hover:border-blue-400 transition">
+                                    <label for="opt${i}" class="cursor-pointer block p-4 border-2 border-gray-200 rounded-lg transition">
                                         <div class="flex items-center">
                                             <span class="text-2xl mr-3">${op.emoji}</span>
                                             <span class="font-semibold text-gray-700 text-lg">${op.texto}</span>
@@ -364,13 +284,12 @@
                     `;
                 }
                 
-                // Checkbox (múltipla escolha)
                 return `
                     <div class="space-y-3">
                         ${pergunta.opcoes.map((op, i) => `
                             <div class="checkbox-item">
                                 <input type="checkbox" id="opt${i}" name="resposta" value="${op.texto}" class="hidden">
-                                <label for="opt${i}" class="cursor-pointer block p-4 border-2 border-gray-200 rounded-lg hover:border-blue-400 transition">
+                                <label for="opt${i}" class="cursor-pointer block p-4 border-2 border-gray-200 rounded-lg transition">
                                     <div class="flex items-center">
                                         <span class="text-2xl mr-3">${op.emoji}</span>
                                         <span class="font-semibold text-gray-700 text-lg">${op.texto}</span>
@@ -389,7 +308,7 @@
                 const modelo = document.getElementById('modeloEstadia')?.value;
 
                 if (!nome || !cidade || !modelo) {
-                    alert('Por favor, preencha todos os campos!');
+                    alert('Preencha todos os campos!');
                     return;
                 }
 
@@ -408,14 +327,14 @@
                 if (pergunta.tipo === 'radio') {
                     const selecionado = document.querySelector('input[name="resposta"]:checked');
                     if (!selecionado) {
-                        alert('Por favor, selecione uma resposta!');
+                        alert('Selecione uma resposta!');
                         return;
                     }
                     resposta = selecionado.value;
                 } else {
                     const selecionados = document.querySelectorAll('input[name="resposta"]:checked');
                     if (selecionados.length === 0) {
-                        alert('Por favor, selecione pelo menos uma opção!');
+                        alert('Selecione pelo menos uma opção!');
                         return;
                     }
                     resposta = Array.from(selecionados).map(cb => cb.value).join(', ');
@@ -451,7 +370,6 @@
                 this.nomeCliente = '';
                 this.cidadeCliente = '';
                 this.modeloEstadia = '';
-                this.dataHora = '';
                 this.render();
             }
 
@@ -464,7 +382,7 @@
                 const app = document.getElementById('app');
                 
                 app.innerHTML = `
-                    <div class="min-h-screen p-4 py-8 no-print">
+                    <div class="min-h-screen p-4 py-8">
                         <div class="max-w-6xl mx-auto">
                             <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
                                 <div class="wave-bg p-6 text-white">
@@ -476,35 +394,16 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="p-6">
                                     <div class="flex gap-4 mb-6 flex-wrap">
-                                        <button 
-                                            onclick="app.exportarPDF()" 
-                                            class="bg-red-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-red-700 transition"
-                                        >
-                                            📄 Exportar PDF Completo
-                                        </button>
-                                        <button 
-                                            onclick="app.novaAvaliacao()" 
-                                            class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition"
-                                        >
-                                            ← Voltar para Pesquisa
-                                        </button>
-                                        <button 
-                                            onclick="app.limparDados()" 
-                                            class="bg-gray-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-gray-700 transition"
-                                        >
-                                            🗑️ Limpar Dados
-                                        </button>
+                                        <button onclick="app.exportarPDF()" class="bg-red-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-red-700">📄 Exportar PDF</button>
+                                        <button onclick="app.novaAvaliacao()" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700">← Voltar</button>
+                                        <button onclick="app.limparDados()" class="bg-gray-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-gray-700">🗑️ Limpar</button>
                                     </div>
-
                                     <div class="bg-blue-50 p-6 rounded-lg mb-6">
-                                        <h3 class="text-2xl font-bold text-blue-800 mb-2">📊 Total de Avaliações: ${this.avaliacoes.length}</h3>
+                                        <h3 class="text-2xl font-bold text-blue-800">Total: ${this.avaliacoes.length} avaliações</h3>
                                     </div>
-
-                                    ${this.avaliacoes.length === 0 ? 
-                                        '<div class="text-center py-12 text-gray-500 text-xl">Nenhuma avaliação registrada ainda</div>' :
+                                    ${this.avaliacoes.length === 0 ? '<div class="text-center py-12 text-gray-500 text-xl">Nenhuma avaliação</div>' :
                                         `<div class="overflow-x-auto">
                                             <table class="w-full">
                                                 <thead class="bg-blue-600 text-white">
@@ -512,20 +411,17 @@
                                                         <th class="px-4 py-3 text-left">Nome</th>
                                                         <th class="px-4 py-3 text-left">Cidade</th>
                                                         <th class="px-4 py-3 text-left">Estadia</th>
-                                                        <th class="px-4 py-3 text-left">Data/Hora</th>
                                                         <th class="px-4 py-3 text-left">Ações</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     ${this.avaliacoes.slice().reverse().map((av, i) => `
-                                                        <tr class="border-b ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50">
+                                                        <tr class="border-b ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}">
                                                             <td class="px-4 py-3 font-semibold">${av.nome}</td>
                                                             <td class="px-4 py-3">${av.cidade}</td>
-                                                            <td class="px-4 py-3"><span class="px-2 py-1 rounded text-xs font-semibold ${av.modeloEstadia === 'Hóspede' ? 'bg-blue-100 text-blue-800' : av.modeloEstadia === 'Sócio' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${av.modeloEstadia}</span></td>
-                                                            <td class="px-4 py-3 text-sm">${av.dataHora}</td>
-                                                            <td class="px-4 py-3 flex gap-2">
-                                                                <button onclick="app.verDetalhes(${av.id})" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 font-semibold">👁️ Ver</button>
-                                                                <button onclick="app.exportarPDFIndividual(${av.id})" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 font-semibold">📄 PDF</button>
+                                                            <td class="px-4 py-3">${av.modeloEstadia}</td>
+                                                            <td class="px-4 py-3">
+                                                                <button onclick="app.verDetalhes(${av.id})" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">👁️</button>
                                                             </td>
                                                         </tr>
                                                     `).join('')}
@@ -542,147 +438,83 @@
 
             exportarPDF() {
                 if (this.avaliacoes.length === 0) {
-                    alert('Não há avaliações para exportar!');
+                    alert('Não há avaliações!');
                     return;
                 }
 
                 const conteudo = `
-                    <div style="font-family: Arial, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto;">
+                    <div style="font-family: Arial; padding: 40px;">
                         <div style="text-align: center; margin-bottom: 40px; border-bottom: 3px solid #3B82F6; padding-bottom: 20px;">
-                            <div style="font-size: 60px; margin-bottom: 10px;">🦕</div>
-                            <h1 style="color: #1E3A8A; margin: 0; font-size: 32px;">Itaipulândia Parque Aquático</h1>
-                            <h2 style="color: #3B82F6; margin: 10px 0 0 0; font-size: 24px;">Relatório de Pesquisa de Satisfação</h2>
-                            <p style="color: #666; margin-top: 10px;">Gerado em: ${new Date().toLocaleString('pt-BR')}</p>
+                            <div style="font-size: 60px;">🦕</div>
+                            <h1 style="color: #1E3A8A; margin: 0;">Itaipulândia Parque Aquático</h1>
+                            <h2 style="color: #3B82F6; margin: 10px 0 0 0;">Relatório de Satisfação</h2>
                         </div>
-
-                        <div style="background: #EFF6FF; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
-                            <h3 style="color: #1E3A8A; margin-top: 0;">📊 Resumo Geral</h3>
-                            <p style="font-size: 18px; margin: 10px 0;"><strong>Total de Avaliações:</strong> ${this.avaliacoes.length}</p>
-                        </div>
-
                         ${this.avaliacoes.map((av, idx) => `
-                            <div style="page-break-inside: avoid; margin-bottom: 40px; border: 2px solid #DBEAFE; border-radius: 10px; padding: 20px;">
+                            <div style="margin-bottom: 40px; border: 2px solid #DBEAFE; border-radius: 10px; padding: 20px;">
                                 <div style="background: linear-gradient(135deg, #3B82F6, #1E3A8A); color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                                    <h3 style="margin: 0; font-size: 20px;">Avaliação #${idx + 1}</h3>
-                                    <p style="margin: 5px 0 0 0; opacity: 0.9;"><strong>Nome:</strong> ${av.nome}</p>
-                                    <p style="margin: 5px 0 0 0; opacity: 0.9;"><strong>Cidade:</strong> ${av.cidade}</p>
-                                    <p style="margin: 5px 0 0 0; opacity: 0.9;"><strong>Modelo de Estadia:</strong> ${av.modeloEstadia}</p>
-                                    <p style="margin: 5px 0 0 0; opacity: 0.9;"><strong>Data/Hora:</strong> ${av.dataHora}</p>
+                                    <h3 style="margin: 0;">#${idx + 1} - ${av.nome}</h3>
+                                    <p style="margin: 5px 0 0 0;">Cidade: ${av.cidade} | Estadia: ${av.modeloEstadia}</p>
                                 </div>
-
                                 ${av.respostas.map((resp, i) => `
-                                    <div style="margin-bottom: 25px; padding: 15px; background: #F9FAFB; border-left: 4px solid #3B82F6; border-radius: 5px;">
-${i + 1}. ${resp.pergunta}
-✓ Resposta: ${resp.resposta}
-${resp.observacao ? <p style="margin: 8px 0 0 0; color: #6B7280; font-style: italic; font-size: 14px;"><strong>💭 Observação:</strong> ${resp.observacao}</p> : ''}
-
-).join('')} </div> ).join('')}
-
-`;
-const opt = {
-                margin: 10,
-                filename: `Relatorio_Itaipulandia_${new Date().toISOString().split('T')[0]}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(conteudo).save();
-        }
-
-        exportarPDFIndividual(id) {
-            const av = this.avaliacoes.find(a => a.id === id);
-            if (!av) return;
-
-            const conteudo = `
-                <div style="font-family: Arial, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto;">
-                    <div style="text-align: center; margin-bottom: 40px; border-bottom: 3px solid #3B82F6; padding-bottom: 20px;">
-                        <div style="font-size: 60px; margin-bottom: 10px;">🦕</div>
-                        <h1 style="color: #1E3A8A; margin: 0; font-size: 32px;">Itaipulândia Parque Aquático</h1>
-                        <h2 style="color: #3B82F6; margin: 10px 0 0 0; font-size: 24px;">Pesquisa de Satisfação</h2>
+                                    <div style="margin-bottom: 20px; padding: 15px; background: #F9FAFB; border-left: 4px solid #3B82F6;">
+                                        <p style="font-weight: bold; margin: 0 0 10px 0;">${i + 1}. ${resp.pergunta}</p>
+                                        <p style="margin: 0;">${resp.resposta}</p>
+                                        ${resp.observacao ? `<p style="font-style: italic; margin: 10px 0 0 0;">Obs: ${resp.observacao}</p>` : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `).join('')}
                     </div>
+                `;
 
-                    <div style="background: linear-gradient(135deg, #3B82F6, #1E3A8A); color: white; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
-                        <h3 style="margin: 0 0 10px 0; font-size: 22px;">Dados do Cliente</h3>
-                        <p style="margin: 5px 0; font-size: 18px;"><strong>Nome:</strong> ${av.nome}</p>
-                        <p style="margin: 5px 0; font-size: 18px;"><strong>Cidade:</strong> ${av.cidade}</p>
-                        <p style="margin: 5px 0; font-size: 18px;"><strong>Modelo de Estadia:</strong> ${av.modeloEstadia}</p>
-                        <p style="margin: 5px 0; font-size: 16px;"><strong>Data/Hora:</strong> ${av.dataHora}</p>
-                    </div>
+                html2pdf().set({
+                    margin: 10,
+                    filename: `Itaipulandia_${new Date().toISOString().split('T')[0]}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                }).from(conteudo).save();
+            }
 
-                    ${av.respostas.map((resp, i) => `
-                        <div style="margin-bottom: 25px; padding: 20px; background: #F9FAFB; border-left: 4px solid #3B82F6; border-radius: 8px;">
-                            <p style="color: #1E3A8A; font-weight: bold; margin: 0 0 12px 0; font-size: 17px;">${i + 1}. ${resp.pergunta}</p>
-                            <p style="margin: 10px 0; color: #374151; font-size: 16px;"><strong>✓ Resposta:</strong> ${resp.resposta}</p>
-                            ${resp.observacao ? `<p style="margin: 10px 0 0 0; color: #6B7280; font-style: italic; font-size: 15px; padding: 10px; background: white; border-radius: 5px;"><strong>💭 Observação:</strong> ${resp.observacao}</p>` : ''}
-                        </div>
-                    `).join('')}
-
-                    <div style="margin-top: 40px; text-align: center; color: #9CA3AF; font-size: 14px; padding-top: 20px; border-top: 1px solid #E5E7EB;">
-                        <p>Relatório gerado em ${new Date().toLocaleString('pt-BR')}</p>
-                    </div>
-                </div>
-            `;
-
-            const opt = {
-                margin: 10,
-                filename: `Avaliacao_${av.nome.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(conteudo).save();
-        }
-
-        limparDados() {
-            if (confirm('⚠️ ATENÇÃO! Isso vai apagar TODAS as avaliações. Deseja continuar?')) {
-                if (confirm('Tem certeza absoluta? Esta ação não pode ser desfeita!')) {
+            limparDados() {
+                if (confirm('Apagar TODAS as avaliações?')) {
                     this.avaliacoes = [];
                     localStorage.removeItem('quizItaipulandia');
-                    alert('✅ Dados limpos com sucesso!');
+                    alert('Dados limpos!');
                     this.render();
                 }
             }
-        }
 
-        verDetalhes(id) {
-            const av = this.avaliacoes.find(a => a.id === id);
-            if (!av) return;
+            verDetalhes(id) {
+                const av = this.avaliacoes.find(a => a.id === id);
+                if (!av) return;
 
-            const modal = `
-                <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onclick="this.remove()">
-                    <div class="bg-white rounded-xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="text-4xl">🦕</div>
-                            <h2 class="text-2xl font-bold text-blue-800">Detalhes da Avaliação</h2>
-                        </div>
-                        <div class="bg-blue-50 p-4 rounded-lg mb-6">
-                            <p class="text-gray-800 mb-2"><strong>Nome:</strong> ${av.nome}</p>
-                            <p class="text-gray-800 mb-2"><strong>Cidade:</strong> ${av.cidade}</p>
-                            <p class="text-gray-800 mb-2"><strong>Modelo de Estadia:</strong> <span class="px-2 py-1 rounded text-xs font-semibold ${av.modeloEstadia === 'Hóspede' ? 'bg-blue-100 text-blue-800' : av.modeloEstadia === 'Sócio' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${av.modeloEstadia}</span></p>
-                            <p class="text-gray-800"><strong>Data/Hora:</strong> ${av.dataHora}</p>
-                        </div>
-                        
-                        ${av.respostas.map((resp, i) => `
-                            <div class="mb-6 p-4 bg-gray-50 rounded-lg border-l-4 border-blue-500">
-                                <p class="font-bold text-blue-800 mb-2">${i + 1}. ${resp.pergunta}</p>
-                                <p class="text-gray-800 mb-2"><strong>Resposta:</strong> ${resp.resposta}</p>
-                                ${resp.observacao ? `<div class="mt-2 p-3 bg-white rounded"><p class="text-gray-600 italic"><strong>💭 Observação:</strong> ${resp.observacao}</p></div>` : ''}
+                const modal = `
+                    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onclick="this.remove()">
+                        <div class="bg-white rounded-xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+                            <h2 class="text-2xl font-bold text-blue-800 mb-4">🦕 Detalhes</h2>
+                            <div class="bg-blue-50 p-4 rounded-lg mb-6">
+                                <p class="mb-2"><strong>Nome:</strong> ${av.nome}</p>
+                                <p class="mb-2"><strong>Cidade:</strong> ${av.cidade}</p>
+                                <p><strong>Estadia:</strong> ${av.modeloEstadia}</p>
                             </div>
-                        `).join('')}
-                        
-                        <button onclick="this.closest('.fixed').remove()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 mt-4">
-                            Fechar
-                        </button>
+                            ${av.respostas.map((resp, i) => `
+                                <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                                    <p class="font-bold text-blue-800 mb-2">${i + 1}. ${resp.pergunta}</p>
+                                    <p class="mb-2"><strong>Resposta:</strong> ${resp.resposta}</p>
+                                    ${resp.observacao ? `<p class="italic text-gray-600">💭 ${resp.observacao}</p>` : ''}
+                                </div>
+                            `).join('')}
+                            <button onclick="this.closest('.fixed').remove()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold">Fechar</button>
+                        </div>
                     </div>
-                </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', modal);
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', modal);
+            }
         }
-    }
 
-    const app = new QuizItaipulandia();
-</script>
-
+        const app = new QuizItaipulandia();
+    </script>
+</body>
+</html>
