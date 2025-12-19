@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+                                                                                            </div>
+         <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -14,6 +15,12 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        // Inicializa o aplicativo
+        const app = new QuizItaipulandia();
+    </script>
+</body>
+</html>
         .option-item input:checked + label, .checkbox-item input:checked + label {
             background: #DBEAFE;
             border-color: #3B82F6;
@@ -36,6 +43,7 @@
                 this.respostas = [];
                 this.nomeCliente = '';
                 this.cidadeCliente = '';
+                this.telefoneCliente = '';
                 this.modeloEstadia = '';
                 this.dataHora = '';
                 this.avaliacoes = [];
@@ -69,29 +77,52 @@
                     },
                     {
                         id: 3,
-                        emoji: "🦖",
-                        texto: "Se você pudesse vir ao parque sem pagar ingresso, quantas vezes viria por ano?",
+                        emoji: "💰",
+                        texto: "O que você achou dos valores do consumo?",
                         tipo: "radio",
                         opcoes: [
-                            { emoji: "1️⃣", texto: "1 vez por ano" },
-                            { emoji: "🔁", texto: "2 a 3 vezes" },
-                            { emoji: "📆", texto: "5 a 6 vezes" },
-                            { emoji: "♾️", texto: "Sempre que pudesse" }
+                            { emoji: "😍", texto: "Excelente" },
+                            { emoji: "🙂", texto: "Bom" },
+                            { emoji: "😐", texto: "Razoável" },
+                            { emoji: "😕", texto: "Caro" }
                         ]
                     },
                     {
                         id: 4,
-                        emoji: "🏨",
-                        texto: "Você já conhece o resort ou já se hospedou aqui alguma vez?",
+                        emoji: "🎟️",
+                        texto: "O que você achou dos valores que você pagou para vir ao parque/resort?",
                         tipo: "radio",
                         opcoes: [
-                            { emoji: "✅", texto: "Sim, já me hospedei" },
-                            { emoji: "👀", texto: "Conheço, mas nunca me hospedei" },
-                            { emoji: "❌", texto: "Ainda não conheço" }
+                            { emoji: "😍", texto: "Excelente" },
+                            { emoji: "🙂", texto: "Bom" },
+                            { emoji: "😐", texto: "Razoável" },
+                            { emoji: "😕", texto: "Caro" }
                         ]
                     },
                     {
                         id: 5,
+                        emoji: "🏨",
+                        texto: "Você já conhecia o parque/resort antes?",
+                        tipo: "radio",
+                        opcoes: [
+                            { emoji: "✅", texto: "Sim, já conhecia" },
+                            { emoji: "❌", texto: "Não, primeira vez" }
+                        ]
+                    },
+                    {
+                        id: 6,
+                        emoji: "🦖",
+                        texto: "Como está sendo a sua experiência no parque?",
+                        tipo: "radio",
+                        opcoes: [
+                            { emoji: "😍", texto: "Muito boa" },
+                            { emoji: "🙂", texto: "Boa" },
+                            { emoji: "😐", texto: "Mais ou menos" },
+                            { emoji: "😕", texto: "Abaixo do esperado" }
+                        ]
+                    },
+                    {
+                        id: 7,
                         emoji: "👨‍👩‍👧‍👦",
                         texto: "Quantas pessoas vieram com você hoje ao parque?",
                         tipo: "radio",
@@ -104,7 +135,7 @@
                         ]
                     },
                     {
-                        id: 6,
+                        id: 8,
                         emoji: "🦕",
                         texto: "O que te impede de voltar ao parque mais vezes durante o ano?",
                         tipo: "checkbox",
@@ -113,19 +144,20 @@
                             { emoji: "⏰", texto: "Falta de tempo" },
                             { emoji: "📅", texto: "Distância / planejamento" },
                             { emoji: "🍔", texto: "Gastos com alimentação e estacionamento" },
+                            { emoji: "🏨", texto: "Hospedagem" },
                             { emoji: "❓", texto: "Outros" }
                         ]
                     },
                     {
-                        id: 7,
+                        id: 9,
                         emoji: "🦖",
-                        texto: "Como está sendo a sua experiência no parque?",
+                        texto: "Se você pudesse vir ao parque sem pagar ingresso, quantas vezes viria por ano?",
                         tipo: "radio",
                         opcoes: [
-                            { emoji: "😍", texto: "Muito boa" },
-                            { emoji: "🙂", texto: "Boa" },
-                            { emoji: "😐", texto: "Mais ou menos" },
-                            { emoji: "😕", texto: "Abaixo do esperado" }
+                            { emoji: "6️⃣", texto: "6 vezes" },
+                            { emoji: "🔟", texto: "10 vezes" },
+                            { emoji: "1️⃣2️⃣", texto: "12 vezes" },
+                            { emoji: "♾️", texto: "20 vezes ou mais" }
                         ]
                     }
                 ];
@@ -146,6 +178,7 @@
                     id: Date.now(),
                     nome: this.nomeCliente,
                     cidade: this.cidadeCliente,
+                    telefone: this.telefoneCliente,
                     modeloEstadia: this.modeloEstadia,
                     dataHora: this.dataHora,
                     respostas: this.respostas
@@ -173,6 +206,10 @@
                                     <div>
                                         <label class="block text-gray-700 font-semibold mb-2">Nome completo</label>
                                         <input type="text" id="nomeCliente" placeholder="Digite seu nome" class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 font-semibold mb-2">Telefone</label>
+                                        <input type="tel" id="telefoneCliente" placeholder="(00) 00000-0000" class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg" />
                                     </div>
                                     <div>
                                         <label class="block text-gray-700 font-semibold mb-2">Cidade</label>
@@ -210,7 +247,7 @@
                                     <div class="text-center text-white">
                                         <div class="text-4xl mb-2">🦕</div>
                                         <h2 class="text-2xl font-bold">Pesquisa de Satisfação</h2>
-                                        <p class="text-blue-100 mt-1">${this.nomeCliente} - ${this.cidadeCliente}</p>
+                                        <p class="text-blue-100 mt-1">${this.nomeCliente} - ${this.cidadeCliente} - ${this.modeloEstadia}</p>
                                     </div>
                                 </div>
                                 <div class="bg-white px-6 py-4">
@@ -236,9 +273,67 @@
                                 <div class="bg-white rounded-b-2xl shadow-lg p-6 flex gap-4">
                                     ${this.currentQuestion > 0 ? '<button onclick="app.voltarPergunta()" class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-400 transition">← Voltar</button>' : ''}
                                     <button onclick="app.proximaPergunta()" class="flex-1 bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 rounded-lg font-bold hover:from-blue-600 hover:to-blue-800 transition">
-                                        ${this.currentQuestion === this.perguntas.length - 1 ? 'Finalizar ✓' : 'Próxima →'}
+                                        ${this.currentQuestion === this.perguntas.length - 1 ? 'Ver Resumo →' : 'Próxima →'}
                                     </button>
                                 </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                else if (this.currentView === 'resumo') {
+                    // Pega as respostas específicas para o resumo
+                    const valorConsumo = this.respostas[2]?.resposta || 'Não informado';
+                    const numPessoas = this.respostas[6]?.resposta || 'Não informado';
+                    const frequencia = this.respostas[8]?.resposta || 'Não informado';
+
+                    app.innerHTML = `
+                        <div class="min-h-screen flex items-center justify-center p-4">
+                            <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full fade-in">
+                                <div class="text-center mb-6">
+                                    <div class="text-6xl mb-4">📊</div>
+                                    <h2 class="text-3xl font-bold text-blue-800 mb-2">Resumo da Pesquisa</h2>
+                                    <div class="bg-blue-50 rounded-lg p-4 mt-4">
+                                        <p class="text-lg font-semibold text-blue-900">${this.nomeCliente}</p>
+                                        <p class="text-blue-700">${this.cidadeCliente} - ${this.modeloEstadia}</p>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-4 mb-6">
+                                    <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-5 border-l-4 border-blue-500">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <span class="text-3xl">💰</span>
+                                            <h3 class="font-bold text-gray-800 text-lg">Avaliação dos Valores</h3>
+                                        </div>
+                                        <p class="text-gray-700 text-lg ml-12">${valorConsumo}</p>
+                                    </div>
+
+                                    <div class="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-5 border-l-4 border-green-500">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <span class="text-3xl">👨‍👩‍👧‍👦</span>
+                                            <h3 class="font-bold text-gray-800 text-lg">Quantidade de Pessoas</h3>
+                                        </div>
+                                        <p class="text-gray-700 text-lg ml-12">${numPessoas}</p>
+                                    </div>
+
+                                    <div class="bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-5 border-l-4 border-purple-500">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <span class="text-3xl">📅</span>
+                                            <h3 class="font-bold text-gray-800 text-lg">Frequência Desejada</h3>
+                                        </div>
+                                        <p class="text-gray-700 text-lg ml-12">${frequencia}</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4 mb-6">
+                                    <p class="text-center text-gray-700">
+                                        <span class="font-bold">💡 Momento ideal:</span> Use estas informações para personalizar sua oferta!
+                                    </p>
+                                </div>
+
+                                <button onclick="app.finalizarPesquisa()" class="w-full bg-gradient-to-r from-green-500 to-green-700 text-white py-4 rounded-lg text-xl font-bold hover:from-green-600 hover:to-green-800 transition shadow-lg">
+                                    ✓ Finalizar Pesquisa
+                                </button>
                             </div>
                         </div>
                     `;
@@ -304,15 +399,17 @@
 
             iniciarQuiz() {
                 const nome = document.getElementById('nomeCliente')?.value.trim();
+                const telefone = document.getElementById('telefoneCliente')?.value.trim();
                 const cidade = document.getElementById('cidadeCliente')?.value.trim();
                 const modelo = document.getElementById('modeloEstadia')?.value;
 
-                if (!nome || !cidade || !modelo) {
+                if (!nome || !telefone || !cidade || !modelo) {
                     alert('Preencha todos os campos!');
                     return;
                 }
 
                 this.nomeCliente = nome;
+                this.telefoneCliente = telefone;
                 this.cidadeCliente = cidade;
                 this.modeloEstadia = modelo;
                 this.dataHora = new Date().toLocaleString('pt-BR');
@@ -349,12 +446,17 @@
                 };
 
                 if (this.currentQuestion === this.perguntas.length - 1) {
-                    this.salvarAvaliacao();
-                    this.currentView = 'final';
+                    this.currentView = 'resumo';
                 } else {
                     this.currentQuestion++;
                 }
 
+                this.render();
+            }
+
+            finalizarPesquisa() {
+                this.salvarAvaliacao();
+                this.currentView = 'final';
                 this.render();
             }
 
@@ -369,6 +471,7 @@
                 this.respostas = [];
                 this.nomeCliente = '';
                 this.cidadeCliente = '';
+                this.telefoneCliente = '';
                 this.modeloEstadia = '';
                 this.render();
             }
@@ -384,137 +487,137 @@
                 app.innerHTML = `
                     <div class="min-h-screen p-4 py-8">
                         <div class="max-w-6xl mx-auto">
-                            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-                                <div class="wave-bg p-6 text-white">
-                                    <div class="flex items-center gap-3">
-                                        <div class="text-5xl">🦕</div>
-                                        <div>
-                                            <h1 class="text-3xl font-bold mb-1">📊 Painel Administrativo</h1>
-                                            <p class="text-blue-100">Itaipulândia Parque Aquático</p>
-                                        </div>
+                            <div class="bg-white rounded-2xl shadow-2xl p-8 mb-6">
+                                <div class="flex justify-between items-center mb-6">
+                                    <div>
+                                        <h1 class="text-3xl font-bold text-blue-800">📊 Painel Administrativo</h1>
+                                        <p class="text-gray-600 mt-2">Total de avaliações: ${this.avaliacoes.length}</p>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <button onclick="app.exportarPDF()" class="bg-red-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-red-700 transition">
+                                            📄 Exportar PDF
+                                        </button>
+                                        <button onclick="app.limparDados()" class="bg-red-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-red-700 transition">
+                                            🗑️ Limpar Dados
+                                        </button>
+                                        <button onclick="app.novaAvaliacao()" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition">
+                                            ← Voltar
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="p-6">
-                                    <div class="flex gap-4 mb-6 flex-wrap">
-                                        <button onclick="app.exportarPDF()" class="bg-red-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-red-700">📄 Exportar PDF</button>
-                                        <button onclick="app.novaAvaliacao()" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700">← Voltar</button>
-                                        <button onclick="app.limparDados()" class="bg-gray-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-gray-700">🗑️ Limpar</button>
+
+                                ${this.avaliacoes.length === 0 ? `
+                                    <div class="text-center py-12">
+                                        <div class="text-6xl mb-4">📭</div>
+                                        <p class="text-xl text-gray-600">Nenhuma avaliação registrada ainda.</p>
                                     </div>
-                                    <div class="bg-blue-50 p-6 rounded-lg mb-6">
-                                        <h3 class="text-2xl font-bold text-blue-800">Total: ${this.avaliacoes.length} avaliações</h3>
-                                    </div>
-                                    ${this.avaliacoes.length === 0 ? '<div class="text-center py-12 text-gray-500 text-xl">Nenhuma avaliação</div>' :
-                                        `<div class="overflow-x-auto">
-                                            <table class="w-full">
-                                                <thead class="bg-blue-600 text-white">
-                                                    <tr>
-                                                        <th class="px-4 py-3 text-left">Nome</th>
-                                                        <th class="px-4 py-3 text-left">Cidade</th>
-                                                        <th class="px-4 py-3 text-left">Estadia</th>
-                                                        <th class="px-4 py-3 text-left">Ações</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    ${this.avaliacoes.slice().reverse().map((av, i) => `
-                                                        <tr class="border-b ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}">
-                                                            <td class="px-4 py-3 font-semibold">${av.nome}</td>
-                                                            <td class="px-4 py-3">${av.cidade}</td>
-                                                            <td class="px-4 py-3">${av.modeloEstadia}</td>
-                                                            <td class="px-4 py-3">
-                                                                <button onclick="app.verDetalhes(${av.id})" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">👁️</button>
-                                                            </td>
-                                                        </tr>
+                                ` : `
+                                    <div class="space-y-4">
+                                        ${this.avaliacoes.map(av => `
+                                            <div class="border-2 border-gray-200 rounded-lg p-6 hover:border-blue-400 transition">
+                                                <div class="flex justify-between items-start mb-4">
+                                                    <div>
+                                                        <h3 class="text-xl font-bold text-gray-800">${av.nome}</h3>
+                                                        <p class="text-gray-600">${av.cidade} - ${av.modeloEstadia}</p>
+                                                        <p class="text-sm text-gray-500">📞 ${av.telefone}</p>
+                                                        <p class="text-sm text-gray-500">📅 ${av.dataHora}</p>
+                                                    </div>
+                                                    <button onclick="app.excluirAvaliacao(${av.id})" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+                                                        🗑️
+                                                    </button>
+                                                </div>
+                                                <div class="space-y-3">
+                                                    ${av.respostas.map((resp, i) => `
+                                                        <div class="bg-gray-50 rounded-lg p-4">
+                                                            <p class="font-semibold text-gray-700 mb-1">${i + 1}. ${resp.pergunta}</p>
+                                                            <p class="text-gray-800 ml-4">→ ${resp.resposta}</p>
+                                                            ${resp.observacao ? `<p class="text-gray-600 text-sm ml-4 mt-1">💭 ${resp.observacao}</p>` : ''}
+                                                        </div>
                                                     `).join('')}
-                                                </tbody>
-                                            </table>
-                                        </div>`
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            exportarPDF() {
-                if (this.avaliacoes.length === 0) {
-                    alert('Não há avaliações!');
-                    return;
-                }
-
-                const conteudo = `
-                    <div style="font-family: Arial; padding: 40px;">
-                        <div style="text-align: center; margin-bottom: 40px; border-bottom: 3px solid #3B82F6; padding-bottom: 20px;">
-                            <div style="font-size: 60px;">🦕</div>
-                            <h1 style="color: #1E3A8A; margin: 0;">Itaipulândia Parque Aquático</h1>
-                            <h2 style="color: #3B82F6; margin: 10px 0 0 0;">Relatório de Satisfação</h2>
-                        </div>
-                        ${this.avaliacoes.map((av, idx) => `
-                            <div style="margin-bottom: 40px; border: 2px solid #DBEAFE; border-radius: 10px; padding: 20px;">
-                                <div style="background: linear-gradient(135deg, #3B82F6, #1E3A8A); color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                                    <h3 style="margin: 0;">#${idx + 1} - ${av.nome}</h3>
-                                    <p style="margin: 5px 0 0 0;">Cidade: ${av.cidade} | Estadia: ${av.modeloEstadia}</p>
-                                </div>
-                                ${av.respostas.map((resp, i) => `
-                                    <div style="margin-bottom: 20px; padding: 15px; background: #F9FAFB; border-left: 4px solid #3B82F6;">
-                                        <p style="font-weight: bold; margin: 0 0 10px 0;">${i + 1}. ${resp.pergunta}</p>
-                                        <p style="margin: 0;">${resp.resposta}</p>
-                                        ${resp.observacao ? `<p style="font-style: italic; margin: 10px 0 0 0;">Obs: ${resp.observacao}</p>` : ''}
+                                                </div>
+                                            </div>
+                                        `).join('')}
                                     </div>
-                                `).join('')}
+                                `}
                             </div>
-                        `).join('')}
+                        </div>
                     </div>
                 `;
-
-                html2pdf().set({
-                    margin: 10,
-                    filename: `Itaipulandia_${new Date().toISOString().split('T')[0]}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2 },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                }).from(conteudo).save();
             }
 
-            limparDados() {
-                if (confirm('Apagar TODAS as avaliações?')) {
-                    this.avaliacoes = [];
-                    localStorage.removeItem('quizItaipulandia');
-                    alert('Dados limpos!');
+            excluirAvaliacao(id) {
+                if (confirm('Deseja realmente excluir esta avaliação?')) {
+                    this.avaliacoes = this.avaliacoes.filter(av => av.id !== id);
+                    localStorage.setItem('quizItaipulandia', JSON.stringify(this.avaliacoes));
                     this.render();
                 }
             }
 
-            verDetalhes(id) {
-                const av = this.avaliacoes.find(a => a.id === id);
-                if (!av) return;
+            limparDados() {
+                if (confirm('⚠️ ATENÇÃO! Isso irá apagar TODAS as avaliações. Deseja continuar?')) {
+                    localStorage.removeItem('quizItaipulandia');
+                    this.avaliacoes = [];
+                    this.render();
+                    alert('✓ Todos os dados foram removidos!');
+                }
+            }
 
-                const modal = `
-                    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onclick="this.remove()">
-                        <div class="bg-white rounded-xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
-                            <h2 class="text-2xl font-bold text-blue-800 mb-4">🦕 Detalhes</h2>
-                            <div class="bg-blue-50 p-4 rounded-lg mb-6">
-                                <p class="mb-2"><strong>Nome:</strong> ${av.nome}</p>
-                                <p class="mb-2"><strong>Cidade:</strong> ${av.cidade}</p>
-                                <p><strong>Estadia:</strong> ${av.modeloEstadia}</p>
-                            </div>
-                            ${av.respostas.map((resp, i) => `
-                                <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-                                    <p class="font-bold text-blue-800 mb-2">${i + 1}. ${resp.pergunta}</p>
-                                    <p class="mb-2"><strong>Resposta:</strong> ${resp.resposta}</p>
-                                    ${resp.observacao ? `<p class="italic text-gray-600">💭 ${resp.observacao}</p>` : ''}
-                                </div>
-                            `).join('')}
-                            <button onclick="this.closest('.fixed').remove()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold">Fechar</button>
-                        </div>
+            exportarPDF() {
+                if (this.avaliacoes.length === 0) {
+                    alert('Não há avaliações para exportar!');
+                    return;
+                }
+
+                const elemento = document.createElement('div');
+                elemento.style.padding = '20px';
+                elemento.style.fontFamily = 'Arial, sans-serif';
+
+                let html = `
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h1 style="color: #1E3A8A; font-size: 28px;">🦕 Itaipulândia - Pesquisa de Satisfação</h1>
+                        <p style="color: #666;">Relatório gerado em ${new Date().toLocaleString('pt-BR')}</p>
+                        <p style="color: #666; font-weight: bold;">Total de avaliações: ${this.avaliacoes.length}</p>
                     </div>
                 `;
-                
-                document.body.insertAdjacentHTML('beforeend', modal);
-            }
-        }
 
-        const app = new QuizItaipulandia();
-    </script>
-</body>
-</html>
+                this.avaliacoes.forEach((av, index) => {
+                    html += `
+                        <div style="border: 2px solid #ddd; padding: 20px; margin-bottom: 20px; border-radius: 10px; page-break-inside: avoid;">
+                            <h2 style="color: #1E3A8A; margin-bottom: 10px;">Avaliação #${index + 1}</h2>
+                            <p><strong>Nome:</strong> ${av.nome}</p>
+                            <p><strong>Telefone:</strong> ${av.telefone}</p>
+                            <p><strong>Cidade:</strong> ${av.cidade}</p>
+                            <p><strong>Modelo de Estadia:</strong> ${av.modeloEstadia}</p>
+                            <p><strong>Data/Hora:</strong> ${av.dataHora}</p>
+                            <hr style="margin: 15px 0; border: 1px solid #eee;">
+                            <h3 style="color: #3B82F6; margin-top: 15px;">Respostas:</h3>
+                    `;
+
+                    av.respostas.forEach((resp, i) => {
+                        html += `
+                            <div style="margin: 15px 0; padding: 10px; background: #f9f9f9; border-radius: 5px;">
+                                <p style="font-weight: bold; color: #333;">${i + 1}. ${resp.pergunta}</p>
+                                <p style="margin-left: 15px; color: #555;">→ ${resp.resposta}</p>
+                                ${resp.observacao ? `<p style="margin-left: 15px; color: #777; font-style: italic;">💭 ${resp.observacao}</p>` : ''}
+                            </div>
+                        `;
+                    });
+
+                    html += `</div>`;
+                });
+
+                elemento.innerHTML = html;
+                document.body.appendChild(elemento);
+
+                const opcoes = {
+                    margin: 10,
+                    filename: `Pesquisa_Itaipulandia_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                html2pdf().set(opcoes).from(elemento).save().then(() => {
+                    document.body.removeChild(elemento);
+                });
+            }               
