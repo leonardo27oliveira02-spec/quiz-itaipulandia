@@ -1,5 +1,4 @@
-                                                                                            </div>
-         <!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -15,12 +14,6 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        // Inicializa o aplicativo
-        const app = new QuizItaipulandia();
-    </script>
-</body>
-</html>
         .option-item input:checked + label, .checkbox-item input:checked + label {
             background: #DBEAFE;
             border-color: #3B82F6;
@@ -282,7 +275,6 @@
                 }
 
                 else if (this.currentView === 'resumo') {
-                    // Pega as respostas específicas para o resumo
                     const valorConsumo = this.respostas[2]?.resposta || 'Não informado';
                     const numPessoas = this.respostas[6]?.resposta || 'Não informado';
                     const frequencia = this.respostas[8]?.resposta || 'Não informado';
@@ -620,4 +612,11 @@
                 html2pdf().set(opcoes).from(elemento).save().then(() => {
                     document.body.removeChild(elemento);
                 });
-            }               
+            }
+        }
+
+        const app = new QuizItaipulandia();
+    </script>
+</body>
+</html>            
+              
