@@ -753,10 +753,93 @@
             }
 
             exportarPDF() {
-                if (this.avaliacoes.length === 0) {
-                    alert('Não há avaliações para exportar!');
-                    return;
-                }
+    if (this.avaliacoes.length === 0) {
+        alert('Não há avaliações para exportar!');
+        return;
+    }
+
+    alert('⏳ Gerando PDF... Isso pode levar alguns segundos.');
+
+    const elemento = document.createElement('div');
+    elemento.style.padding = '15px';
+    elemento.style.fontFamily = 'Arial, sans-serif';
+    elemento.style.fontSize = '11px';
+    elemento.style.lineHeight = '1.4';
+
+    let html = `
+        <div style="text-align: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #1E3A8A;">
+            <h1 style="color: #1E3A8A; font-size: 22px; margin: 0;">Itaipulândia - Pesquisa de Satisfação</h1>
+            <p style="color: #666; font-size: 10px; margin: 5px 0;">Relatório gerado em ${new Date().toLocaleString('pt-BR')}</p>
+            <p style="color: #666; font-weight: bold; font-size: 11px; margin: 5px 0;">Total: ${this.avaliacoes.length} avaliações</p>
+        </div>
+    `;
+
+    this.avaliacoes.forEach((av, index) => {
+        html += `
+            <div style="border: 1px solid #ddd; padding: 12px; margin-bottom: 15px; border-radius: 8px; page-break-inside: avoid; background: #fafafa;">
+                <div style="background: #1E3A8A; color: white; padding: 8px; margin: -12px -12px 10px -12px; border-radius: 8px 8px 0 0;">
+                    <strong style="font-size: 13px;">Avaliação #${index + 1}</strong>
+                </div>
+                <table style="width: 100%; font-size: 10px; margin-bottom: 10px;">
+                    <tr>
+                        <td style="padding: 3px;"><strong>Nome:</strong> ${av.nome}</td>
+                        <td style="padding: 3px;"><strong>Telefone:</strong> ${av.telefone}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 3px;"><strong>Cidade:</strong> ${av.cidade}</td>
+                        <td style="padding: 3px;"><strong>Status:</strong> ${av.modeloEstadia}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="padding: 3px;"><strong>Data:</strong> ${av.dataHora}</td>
+                    </tr>
+                </table>
+                <div style="border-top: 1px solid #ddd; padding-top: 8px;">
+        `;
+
+        av.respostas.forEach((resp, i) => {
+            html += `
+                <div style="margin: 8px 0; padding: 8px; background: white; border-radius: 5px; border-left: 3px solid #3B82F6;">
+                    <p style="font-weight: bold; color: #1E3A8A; font-size: 10px; margin: 0 0 4px 0;">${i + 1}. ${resp.pergunta}</p>
+                    <p style="margin: 0 0 0 10px; color: #333; font-size: 10px;">→ ${resp.resposta}</p>
+                    ${resp.observacao ? `<p style="margin: 4px 0 0 10px; color: #666; font-style: italic; font-size: 9px;">💭 ${resp.observacao}</p>` : ''}
+                </div>
+            `;
+        });
+
+        html += `</div></div>`;
+    });
+
+    elemento.innerHTML = html;
+    document.body.appendChild(elemento);
+
+    const opcoes = {
+        margin: [8, 8, 8, 8],
+        filename: `Pesquisa_Itaipulandia_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.pdf`,
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: { 
+            scale: 1.5,
+            useCORS: true,
+            letterRendering: true,
+            logging: false
+        },
+        jsPDF: { 
+            unit: 'mm', 
+            format: 'a4', 
+            orientation: 'portrait',
+            compress: true
+        },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+
+    html2pdf().set(opcoes).from(elemento).save().then(() => {
+        document.body.removeChild(elemento);
+        alert('✅ PDF gerado com sucesso!');
+    }).catch(error => {
+        console.error('Erro ao gerar PDF:', error);
+        document.body.removeChild(elemento);
+        alert('❌ Erro ao gerar PDF. Tente exportar menos avaliações por vez.');
+    });
+}
 
                 const elemento = document.createElement('div');
                 elemento.style.padding = '20px';
