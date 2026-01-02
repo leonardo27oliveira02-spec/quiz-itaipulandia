@@ -758,50 +758,92 @@
         return;
     }
 
-    alert('⏳ Gerando PDF... Isso pode levar alguns segundos.');
+    // Pergunta quantas avaliações por arquivo
+    const porPagina = prompt(`Você tem ${this.avaliacoes.length} avaliações.\n\nQuantas avaliações por arquivo PDF?\n(Recomendado: 20 a 30 para melhor qualidade)`, '25');
+    
+    if (!porPagina || isNaN(porPagina) || porPagina <= 0) {
+        alert('Operação cancelada ou valor inválido.');
+        return;
+    }
+
+    const limite = parseInt(porPagina);
+    const totalArquivos = Math.ceil(this.avaliacoes.length / limite);
+    
+    if (!confirm(`Serão gerados ${totalArquivos} arquivo(s) PDF.\n\nDeseja continuar?`)) {
+        return;
+    }
+
+    alert('⏳ Iniciando geração dos PDFs...\n\nAguarde, isso pode levar alguns minutos.');
+    
+    this.gerarPDFEmLotes(0, limite, totalArquivos);
+}
+
+gerarPDFEmLotes(inicio, limite, totalArquivos) {
+    const fim = Math.min(inicio + limite, this.avaliacoes.length);
+    const loteAtual = Math.floor(inicio / limite) + 1;
+    const avaliacoesLote = this.avaliacoes.slice(inicio, fim);
 
     const elemento = document.createElement('div');
-    elemento.style.padding = '15px';
+    elemento.style.padding = '20px';
     elemento.style.fontFamily = 'Arial, sans-serif';
-    elemento.style.fontSize = '11px';
-    elemento.style.lineHeight = '1.4';
+    elemento.style.fontSize = '12px';
 
     let html = `
-        <div style="text-align: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #1E3A8A;">
-            <h1 style="color: #1E3A8A; font-size: 22px; margin: 0;">Itaipulândia - Pesquisa de Satisfação</h1>
-            <p style="color: #666; font-size: 10px; margin: 5px 0;">Relatório gerado em ${new Date().toLocaleString('pt-BR')}</p>
-            <p style="color: #666; font-weight: bold; font-size: 11px; margin: 5px 0;">Total: ${this.avaliacoes.length} avaliações</p>
+        <div style="text-align: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 3px solid #1E3A8A;">
+            <h1 style="color: #1E3A8A; font-size: 24px; margin: 0;">Itaipulândia - Pesquisa de Satisfação</h1>
+            <p style="color: #666; font-size: 11px; margin: 8px 0;">Relatório gerado em ${new Date().toLocaleString('pt-BR')}</p>
+            <p style="color: #666; font-weight: bold; font-size: 12px; margin: 5px 0;">
+                Arquivo ${loteAtual} de ${totalArquivos} | Avaliações ${inicio + 1} a ${fim} de ${this.avaliacoes.length}
+            </p>
         </div>
     `;
 
-    this.avaliacoes.forEach((av, index) => {
+    avaliacoesLote.forEach((av, index) => {
+        const numeroGlobal = inicio + index + 1;
         html += `
-            <div style="border: 1px solid #ddd; padding: 12px; margin-bottom: 15px; border-radius: 8px; page-break-inside: avoid; background: #fafafa;">
-                <div style="background: #1E3A8A; color: white; padding: 8px; margin: -12px -12px 10px -12px; border-radius: 8px 8px 0 0;">
-                    <strong style="font-size: 13px;">Avaliação #${index + 1}</strong>
+            <div style="border: 2px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 10px; page-break-inside: avoid; background: #f9f9f9;">
+                <div style="background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%); color: white; padding: 10px 15px; margin: -15px -15px 15px -15px; border-radius: 8px 8px 0 0;">
+                    <strong style="font-size: 16px;">📋 Avaliação #${numeroGlobal}</strong>
                 </div>
-                <table style="width: 100%; font-size: 10px; margin-bottom: 10px;">
-                    <tr>
-                        <td style="padding: 3px;"><strong>Nome:</strong> ${av.nome}</td>
-                        <td style="padding: 3px;"><strong>Telefone:</strong> ${av.telefone}</td>
+                
+                <table style="width: 100%; font-size: 11px; margin-bottom: 12px; border-collapse: collapse;">
+                    <tr style="background: #e3f2fd;">
+                        <td style="padding: 6px; border: 1px solid #ddd;"><strong>Nome:</strong></td>
+                        <td style="padding: 6px; border: 1px solid #ddd;">${av.nome}</td>
+                        <td style="padding: 6px; border: 1px solid #ddd;"><strong>Telefone:</strong></td>
+                        <td style="padding: 6px; border: 1px solid #ddd;">${av.telefone}</td>
                     </tr>
                     <tr>
-                        <td style="padding: 3px;"><strong>Cidade:</strong> ${av.cidade}</td>
-                        <td style="padding: 3px;"><strong>Status:</strong> ${av.modeloEstadia}</td>
+                        <td style="padding: 6px; border: 1px solid #ddd;"><strong>Cidade:</strong></td>
+                        <td style="padding: 6px; border: 1px solid #ddd;">${av.cidade}</td>
+                        <td style="padding: 6px; border: 1px solid #ddd;"><strong>Status:</strong></td>
+                        <td style="padding: 6px; border: 1px solid #ddd;">${av.modeloEstadia}</td>
                     </tr>
-                    <tr>
-                        <td colspan="2" style="padding: 3px;"><strong>Data:</strong> ${av.dataHora}</td>
+                    <tr style="background: #e3f2fd;">
+                        <td style="padding: 6px; border: 1px solid #ddd;"><strong>Data/Hora:</strong></td>
+                        <td colspan="3" style="padding: 6px; border: 1px solid #ddd;">${av.dataHora}</td>
                     </tr>
                 </table>
-                <div style="border-top: 1px solid #ddd; padding-top: 8px;">
+
+                <div style="border-top: 2px solid #3B82F6; padding-top: 12px;">
+                    <h3 style="color: #1E3A8A; font-size: 13px; margin: 0 0 10px 0;">📝 Respostas:</h3>
         `;
 
         av.respostas.forEach((resp, i) => {
             html += `
-                <div style="margin: 8px 0; padding: 8px; background: white; border-radius: 5px; border-left: 3px solid #3B82F6;">
-                    <p style="font-weight: bold; color: #1E3A8A; font-size: 10px; margin: 0 0 4px 0;">${i + 1}. ${resp.pergunta}</p>
-                    <p style="margin: 0 0 0 10px; color: #333; font-size: 10px;">→ ${resp.resposta}</p>
-                    ${resp.observacao ? `<p style="margin: 4px 0 0 10px; color: #666; font-style: italic; font-size: 9px;">💭 ${resp.observacao}</p>` : ''}
+                <div style="margin: 10px 0; padding: 10px; background: white; border-radius: 6px; border-left: 4px solid #3B82F6;">
+                    <p style="font-weight: bold; color: #1E3A8A; font-size: 11px; margin: 0 0 5px 0;">
+                        <span style="background: #3B82F6; color: white; padding: 2px 8px; border-radius: 12px; margin-right: 5px;">${i + 1}</span>
+                        ${resp.pergunta}
+                    </p>
+                    <p style="margin: 5px 0 0 15px; color: #333; font-size: 11px; line-height: 1.5;">
+                        <strong>→</strong> ${resp.resposta}
+                    </p>
+                    ${resp.observacao ? `
+                        <p style="margin: 8px 0 0 15px; padding: 8px; background: #fff9e6; border-left: 3px solid #ffc107; color: #666; font-style: italic; font-size: 10px; border-radius: 4px;">
+                            💭 <strong>Observação:</strong> ${resp.observacao}
+                        </p>
+                    ` : ''}
                 </div>
             `;
         });
@@ -812,36 +854,103 @@
     elemento.innerHTML = html;
     document.body.appendChild(elemento);
 
+    const nomeArquivo = totalArquivos > 1 
+        ? `Pesquisa_Itaipulandia_Parte${loteAtual}de${totalArquivos}_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.pdf`
+        : `Pesquisa_Itaipulandia_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.pdf`;
+
     const opcoes = {
-        margin: [8, 8, 8, 8],
-        filename: `Pesquisa_Itaipulandia_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.pdf`,
-        image: { type: 'jpeg', quality: 0.95 },
+        margin: [10, 10, 10, 10],
+        filename: nomeArquivo,
+        image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { 
-            scale: 1.5,
+            scale: 2,
             useCORS: true,
-            letterRendering: true,
-            logging: false
+            logging: false,
+            windowWidth: 1024
         },
         jsPDF: { 
             unit: 'mm', 
             format: 'a4', 
-            orientation: 'portrait',
-            compress: true
+            orientation: 'portrait'
         },
         pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
 
     html2pdf().set(opcoes).from(elemento).save().then(() => {
         document.body.removeChild(elemento);
-        alert('✅ PDF gerado com sucesso!');
+        
+        const proximoInicio = fim;
+        if (proximoInicio < this.avaliacoes.length) {
+            setTimeout(() => {
+                alert(`✅ Arquivo ${loteAtual} de ${totalArquivos} concluído!\n\n⏳ Gerando próximo arquivo...`);
+                this.gerarPDFEmLotes(proximoInicio, limite, totalArquivos);
+            }, 1000);
+        } else {
+            alert(`🎉 Exportação concluída!\n\n${totalArquivos} arquivo(s) PDF gerado(s) com sucesso!`);
+        }
     }).catch(error => {
         console.error('Erro ao gerar PDF:', error);
         document.body.removeChild(elemento);
-        alert('❌ Erro ao gerar PDF. Tente exportar menos avaliações por vez.');
+        alert(`❌ Erro ao gerar arquivo ${loteAtual}.\n\nTente com menos avaliações por arquivo.`);
     });
 }
 
-                const app = new QuizItaipulandia();
+                const elemento = document.createElement('div');
+                elemento.style.padding = '20px';
+                elemento.style.fontFamily = 'Arial, sans-serif';
+
+                let html = `
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h1 style="color: #1E3A8A; font-size: 28px;">🦕 Itaipulândia - Pesquisa de Satisfação</h1>
+                        <p style="color: #666;">Relatório gerado em ${new Date().toLocaleString('pt-BR')}</p>
+                        <p style="color: #666; font-weight: bold;">Total de avaliações: ${this.avaliacoes.length}</p>
+                    </div>
+                `;
+
+                this.avaliacoes.forEach((av, index) => {
+                    html += `
+                        <div style="border: 2px solid #ddd; padding: 20px; margin-bottom: 20px; border-radius: 10px; page-break-inside: avoid;">
+                            <h2 style="color: #1E3A8A; margin-bottom: 10px;">Avaliação #${index + 1}</h2>
+                            <p><strong>Nome:</strong> ${av.nome}</p>
+                            <p><strong>Telefone:</strong> ${av.telefone}</p>
+                            <p><strong>Cidade:</strong> ${av.cidade}</p>
+                            <p><strong>Modelo de Estadia:</strong> ${av.modeloEstadia}</p>
+                            <p><strong>Data/Hora:</strong> ${av.dataHora}</p>
+                            <hr style="margin: 15px 0; border: 1px solid #eee;">
+                            <h3 style="color: #3B82F6; margin-top: 15px;">Respostas:</h3>
+                    `;
+
+                    av.respostas.forEach((resp, i) => {
+                        html += `
+                            <div style="margin: 15px 0; padding: 10px; background: #f9f9f9; border-radius: 5px;">
+                                <p style="font-weight: bold; color: #333;">${i + 1}. ${resp.pergunta}</p>
+                                <p style="margin-left: 15px; color: #555;">→ ${resp.resposta}</p>
+                                ${resp.observacao ? `<p style="margin-left: 15px; color: #777; font-style: italic;">💭 ${resp.observacao}</p>` : ''}
+                            </div>
+                        `;
+                    });
+
+                    html += `</div>`;
+                });
+
+                elemento.innerHTML = html;
+                document.body.appendChild(elemento);
+
+                const opcoes = {
+                    margin: 10,
+                    filename: `Pesquisa_Itaipulandia_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                html2pdf().set(opcoes).from(elemento).save().then(() => {
+                    document.body.removeChild(elemento);
+                });
+            }
+        }
+
+        const app = new QuizItaipulandia();
     </script>
 </body>
 </html>
