@@ -841,62 +841,7 @@
     });
 }
 
-                const elemento = document.createElement('div');
-                elemento.style.padding = '20px';
-                elemento.style.fontFamily = 'Arial, sans-serif';
-
-                let html = `
-                    <div style="text-align: center; margin-bottom: 30px;">
-                        <h1 style="color: #1E3A8A; font-size: 28px;">🦕 Itaipulândia - Pesquisa de Satisfação</h1>
-                        <p style="color: #666;">Relatório gerado em ${new Date().toLocaleString('pt-BR')}</p>
-                        <p style="color: #666; font-weight: bold;">Total de avaliações: ${this.avaliacoes.length}</p>
-                    </div>
-                `;
-
-                this.avaliacoes.forEach((av, index) => {
-                    html += `
-                        <div style="border: 2px solid #ddd; padding: 20px; margin-bottom: 20px; border-radius: 10px; page-break-inside: avoid;">
-                            <h2 style="color: #1E3A8A; margin-bottom: 10px;">Avaliação #${index + 1}</h2>
-                            <p><strong>Nome:</strong> ${av.nome}</p>
-                            <p><strong>Telefone:</strong> ${av.telefone}</p>
-                            <p><strong>Cidade:</strong> ${av.cidade}</p>
-                            <p><strong>Modelo de Estadia:</strong> ${av.modeloEstadia}</p>
-                            <p><strong>Data/Hora:</strong> ${av.dataHora}</p>
-                            <hr style="margin: 15px 0; border: 1px solid #eee;">
-                            <h3 style="color: #3B82F6; margin-top: 15px;">Respostas:</h3>
-                    `;
-
-                    av.respostas.forEach((resp, i) => {
-                        html += `
-                            <div style="margin: 15px 0; padding: 10px; background: #f9f9f9; border-radius: 5px;">
-                                <p style="font-weight: bold; color: #333;">${i + 1}. ${resp.pergunta}</p>
-                                <p style="margin-left: 15px; color: #555;">→ ${resp.resposta}</p>
-                                ${resp.observacao ? `<p style="margin-left: 15px; color: #777; font-style: italic;">💭 ${resp.observacao}</p>` : ''}
-                            </div>
-                        `;
-                    });
-
-                    html += `</div>`;
-                });
-
-                elemento.innerHTML = html;
-                document.body.appendChild(elemento);
-
-                const opcoes = {
-                    margin: 10,
-                    filename: `Pesquisa_Itaipulandia_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2 },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-                };
-
-                html2pdf().set(opcoes).from(elemento).save().then(() => {
-                    document.body.removeChild(elemento);
-                });
-            }
-        }
-
-        const app = new QuizItaipulandia();
+                const app = new QuizItaipulandia();
     </script>
 </body>
 </html>
