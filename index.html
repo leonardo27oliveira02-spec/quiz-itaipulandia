@@ -1,4 +1,316 @@
-<div class="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center"><span class="text-2xl">👤</span></div>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesquisa de Satisfação - Itaipulândia</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🦕</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        .wave-bg { background: linear-gradient(135deg, #3B82F6 0%, #1E3A8A 100%); }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .option-item input:checked + label, .checkbox-item input:checked + label { background: #DBEAFE; border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); }
+        .option-item:hover label, .checkbox-item:hover label { border-color: #60A5FA; background: #EFF6FF; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen">
+    <div id="app"></div>
+    <script>
+        class QuizItaipulandia {
+            constructor() {
+                this.currentView = 'inicio';
+                this.currentQuestion = 0;
+                this.respostas = [];
+                this.nomeCliente = '';
+                this.cidadeCliente = '';
+                this.telefoneCliente = '';
+                this.modeloEstadia = '';
+                this.dataHora = '';
+                this.avaliacoes = [];
+                this.perguntas = [
+                    { id: 1, emoji: "👋", texto: "Como foi a sua recepção hoje?", tipo: "radio", opcoes: [
+                        { emoji: "😍", texto: "Excelente" }, { emoji: "🙂", texto: "Boa" }, { emoji: "😐", texto: "Regular" }, { emoji: "😕", texto: "Ruim" }
+                    ]},
+                    { id: 2, emoji: "🦕", texto: "O que mais chamou a atenção de vocês no parque até agora?", tipo: "checkbox", opcoes: [
+                        { emoji: "🌊", texto: "Piscina de ondas" }, { emoji: "👶", texto: "Kids" }, { emoji: "🎢", texto: "Toboáguas radicais" }, 
+                        { emoji: "🛟", texto: "Rio lento" }, { emoji: "🍔", texto: "Bares" }, { emoji: "✨", texto: "Outros" }
+                    ]},
+                    { id: 3, emoji: "💰", texto: "O que você achou dos valores do consumo?", tipo: "radio", opcoes: [
+                        { emoji: "😍", texto: "Excelente" }, { emoji: "🙂", texto: "Bom" }, { emoji: "😐", texto: "Razoável" }, { emoji: "😕", texto: "Caro" }
+                    ]},
+                    { id: 4, emoji: "🎟️", texto: "O que você achou dos valores que você pagou para vir ao parque/resort?", tipo: "radio", opcoes: [
+                        { emoji: "😍", texto: "Excelente" }, { emoji: "🙂", texto: "Bom" }, { emoji: "😐", texto: "Razoável" }, { emoji: "😕", texto: "Caro" }
+                    ]},
+                    { id: 5, emoji: "🏨", texto: "Você já conhecia o parque/resort antes?", tipo: "radio", opcoes: [
+                        { emoji: "✅", texto: "Sim, já conhecia" }, { emoji: "❌", texto: "Não, primeira vez" }
+                    ]},
+                    { id: 6, emoji: "🦖", texto: "Como está sendo a sua experiência no parque?", tipo: "radio", opcoes: [
+                        { emoji: "😍", texto: "Muito boa" }, { emoji: "🙂", texto: "Boa" }, { emoji: "😐", texto: "Mais ou menos" }, { emoji: "😕", texto: "Abaixo do esperado" }
+                    ]},
+                    { id: 7, emoji: "👨‍👩‍👧‍👦", texto: "Quantas pessoas vieram com você hoje ao parque?", tipo: "radio", opcoes: [
+                        { emoji: "2️⃣", texto: "2 pessoas" }, { emoji: "3️⃣", texto: "3 pessoas" }, { emoji: "4️⃣", texto: "4 pessoas" }, 
+                        { emoji: "5️⃣", texto: "5 pessoas" }, { emoji: "6️⃣", texto: "6 pessoas" }
+                    ]},
+                    { id: 8, emoji: "🦕", texto: "O que te impede de voltar ao parque mais vezes durante o ano?", tipo: "checkbox", opcoes: [
+                        { emoji: "💰", texto: "Valor do ingresso" }, { emoji: "⏰", texto: "Falta de tempo" }, { emoji: "📅", texto: "Distância / planejamento" },
+                        { emoji: "🍔", texto: "Gastos com alimentação e estacionamento" }, { emoji: "🏨", texto: "Hospedagem" }, { emoji: "❓", texto: "Outros" }
+                    ]},
+                    { id: 9, emoji: "🦖", texto: "Se você pudesse vir ao parque sem pagar ingresso, quantas vezes viria por ano?", tipo: "radio", opcoes: [
+                        { emoji: "6️⃣", texto: "6 vezes" }, { emoji: "🔟", texto: "10 vezes" }, { emoji: "1️⃣2️⃣", texto: "12 vezes" }, { emoji: "♾️", texto: "20 vezes ou mais" }
+                    ]}
+                ];
+                this.carregarAvaliacoes();
+                this.render();
+            }
+
+            carregarAvaliacoes() {
+                const dados = localStorage.getItem('quizItaipulandia');
+                if (dados) this.avaliacoes = JSON.parse(dados);
+            }
+
+            salvarAvaliacao() {
+                this.avaliacoes.push({
+                    id: Date.now(), nome: this.nomeCliente, cidade: this.cidadeCliente, telefone: this.telefoneCliente,
+                    modeloEstadia: this.modeloEstadia, dataHora: this.dataHora, respostas: this.respostas
+                });
+                localStorage.setItem('quizItaipulandia', JSON.stringify(this.avaliacoes));
+            }
+
+            render() {
+                const app = document.getElementById('app');
+                if (this.currentView === 'inicio') {
+                    app.innerHTML = `<div class="min-h-screen flex items-center justify-center p-4">
+                        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full fade-in">
+                            <div class="text-center mb-8">
+                                <div class="text-6xl mb-4">🦕</div>
+                                <h1 class="text-3xl font-bold text-blue-800 mb-2">Itaipulândia</h1>
+                                <h2 class="text-xl text-blue-600">Parque Aquático</h2>
+                                <div class="mt-4 h-1 w-20 bg-gradient-to-r from-blue-400 to-blue-600 mx-auto rounded"></div>
+                            </div>
+                            <p class="text-gray-700 text-center mb-6 text-lg">Sua opinião é muito importante! 💙</p>
+                            <div class="space-y-4">
+                                <div><label class="block text-gray-700 font-semibold mb-2">Nome completo</label>
+                                    <input type="text" id="nomeCliente" placeholder="Digite seu nome" class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg" /></div>
+                                <div><label class="block text-gray-700 font-semibold mb-2">Telefone</label>
+                                    <input type="tel" id="telefoneCliente" placeholder="(00) 00000-0000" class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg" /></div>
+                                <div><label class="block text-gray-700 font-semibold mb-2">Cidade</label>
+                                    <input type="text" id="cidadeCliente" placeholder="Qual sua cidade?" class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg" /></div>
+                                <div><label class="block text-gray-700 font-semibold mb-2">Modelo de estadia</label>
+                                    <select id="modeloEstadia" class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:border-blue-500 focus:outline-none text-lg">
+                                        <option value="">Selecione...</option>
+                                        <option value="Hóspede">Hóspede</option>
+                                        <option value="Sócio">Sócio</option>
+                                        <option value="Day Use">Day Use</option>
+                                    </select></div>
+                                <button onclick="app.iniciarQuiz()" class="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white py-4 rounded-lg text-xl font-bold hover:from-blue-600 hover:to-blue-800 transition shadow-lg">Iniciar Pesquisa 🎯</button>
+                                <button onclick="app.verPainel()" class="w-full bg-gray-700 text-white py-3 rounded-lg text-lg font-bold hover:bg-gray-800 transition">📊 Painel Administrativo</button>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+                else if (this.currentView === 'quiz') {
+                    const pergunta = this.perguntas[this.currentQuestion];
+                    const progresso = ((this.currentQuestion + 1) / this.perguntas.length) * 100;
+                    app.innerHTML = `<div class="min-h-screen p-4 py-8">
+                        <div class="max-w-3xl mx-auto">
+                            <div class="bg-white rounded-t-2xl shadow-lg p-6 wave-bg">
+                                <div class="text-center text-white">
+                                    <div class="text-4xl mb-2">🦕</div>
+                                    <h2 class="text-2xl font-bold">Pesquisa de Satisfação</h2>
+                                    <p class="text-blue-100 mt-1">${this.nomeCliente} - ${this.cidadeCliente} - ${this.modeloEstadia}</p>
+                                </div>
+                            </div>
+                            <div class="bg-white px-6 py-4">
+                                <div class="flex justify-between text-sm text-gray-600 mb-2">
+                                    <span>Pergunta ${this.currentQuestion + 1} de ${this.perguntas.length}</span>
+                                    <span>${Math.round(progresso)}%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3">
+                                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500" style="width: ${progresso}%"></div>
+                                </div>
+                            </div>
+                            <div class="bg-white p-8 shadow-lg fade-in">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="text-4xl">${pergunta.emoji}</div>
+                                    <h3 class="text-2xl font-bold text-gray-800">${this.currentQuestion + 1}. ${pergunta.texto}</h3>
+                                </div>
+                                ${this.renderizarOpcoes(pergunta)}
+                                <div class="mt-6">
+                                    <label class="block text-gray-700 font-semibold mb-2">💭 Observações (opcional)</label>
+                                    <textarea id="observacao" rows="3" placeholder="Deixe um comentário..." class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"></textarea>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-b-2xl shadow-lg p-6 flex gap-4">
+                                ${this.currentQuestion > 0 ? '<button onclick="app.voltarPergunta()" class="flex-1 bg-gray-300 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-400 transition">← Voltar</button>' : ''}
+                                <button onclick="app.proximaPergunta()" class="flex-1 bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 rounded-lg font-bold hover:from-blue-600 hover:to-blue-800 transition">
+                                    ${this.currentQuestion === this.perguntas.length - 1 ? 'Ver Resumo →' : 'Próxima →'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+                else if (this.currentView === 'resumo') {
+                    const valorConsumo = this.respostas[2]?.resposta || 'Não informado';
+                    const numPessoas = this.respostas[6]?.resposta || 'Não informado';
+                    const frequencia = this.respostas[8]?.resposta || 'Não informado';
+                    app.innerHTML = `<div class="min-h-screen flex items-center justify-center p-4">
+                        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full fade-in">
+                            <div class="text-center mb-6">
+                                <div class="text-6xl mb-4">📊</div>
+                                <h2 class="text-3xl font-bold text-blue-800 mb-2">Resumo da Pesquisa</h2>
+                                <div class="bg-blue-50 rounded-lg p-4 mt-4">
+                                    <p class="text-lg font-semibold text-blue-900">${this.nomeCliente}</p>
+                                    <p class="text-blue-700">${this.cidadeCliente} - ${this.modeloEstadia}</p>
+                                </div>
+                            </div>
+                            <div class="space-y-4 mb-6">
+                                <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-5 border-l-4 border-blue-500">
+                                    <div class="flex items-center gap-3 mb-2"><span class="text-3xl">💰</span><h3 class="font-bold text-gray-800 text-lg">Avaliação dos Valores</h3></div>
+                                    <p class="text-gray-700 text-lg ml-12">${valorConsumo}</p>
+                                </div>
+                                <div class="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-5 border-l-4 border-green-500">
+                                    <div class="flex items-center gap-3 mb-2"><span class="text-3xl">👨‍👩‍👧‍👦</span><h3 class="font-bold text-gray-800 text-lg">Quantidade de Pessoas</h3></div>
+                                    <p class="text-gray-700 text-lg ml-12">${numPessoas}</p>
+                                </div>
+                                <div class="bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg p-5 border-l-4 border-purple-500">
+                                    <div class="flex items-center gap-3 mb-2"><span class="text-3xl">📅</span><h3 class="font-bold text-gray-800 text-lg">Frequência Desejada</h3></div>
+                                    <p class="text-gray-700 text-lg ml-12">${frequencia}</p>
+                                </div>
+                            </div>
+                            <div class="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4 mb-6">
+                                <p class="text-center text-gray-700"><span class="font-bold">💡 Momento ideal:</span> Use estas informações para personalizar sua oferta!</p>
+                            </div>
+                            <button onclick="app.finalizarPesquisa()" class="w-full bg-gradient-to-r from-green-500 to-green-700 text-white py-4 rounded-lg text-xl font-bold hover:from-green-600 hover:to-green-800 transition shadow-lg">✓ Finalizar Pesquisa</button>
+                        </div>
+                    </div>`;
+                }
+                else if (this.currentView === 'final') {
+                    app.innerHTML = `<div class="min-h-screen flex items-center justify-center p-4">
+                        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center fade-in">
+                            <div class="text-7xl mb-6">🎉</div>
+                            <h2 class="text-3xl font-bold text-blue-800 mb-4">Obrigado!</h2>
+                            <p class="text-xl text-gray-700 mb-6">Sua avaliação foi registrada, ${this.nomeCliente}!</p>
+                            <p class="text-gray-600 mb-8">Sua opinião é muito importante! 💙</p>
+                            <button onclick="app.novaAvaliacao()" class="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white py-4 rounded-lg text-xl font-bold hover:from-blue-600 hover:to-blue-800 transition">Nova Avaliação</button>
+                        </div>
+                    </div>`;
+                }
+                else if (this.currentView === 'painel') {
+                    this.renderPainel();
+                }
+            }
+
+            renderizarOpcoes(pergunta) {
+                if (pergunta.tipo === 'radio') {
+                    return `<div class="space-y-3">${pergunta.opcoes.map((op, i) => `
+                        <div class="option-item">
+                            <input type="radio" id="opt${i}" name="resposta" value="${op.texto}" class="hidden">
+                            <label for="opt${i}" class="cursor-pointer block p-4 border-2 border-gray-200 rounded-lg transition">
+                                <div class="flex items-center"><span class="text-2xl mr-3">${op.emoji}</span><span class="font-semibold text-gray-700 text-lg">${op.texto}</span></div>
+                            </label>
+                        </div>`).join('')}</div>`;
+                }
+                return `<div class="space-y-3">${pergunta.opcoes.map((op, i) => `
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="opt${i}" name="resposta" value="${op.texto}" class="hidden">
+                        <label for="opt${i}" class="cursor-pointer block p-4 border-2 border-gray-200 rounded-lg transition">
+                            <div class="flex items-center"><span class="text-2xl mr-3">${op.emoji}</span><span class="font-semibold text-gray-700 text-lg">${op.texto}</span></div>
+                        </label>
+                    </div>`).join('')}</div><p class="text-sm text-gray-500 mt-3">💡 Você pode selecionar várias opções</p>`;
+            }
+
+            iniciarQuiz() {
+                const nome = document.getElementById('nomeCliente')?.value.trim();
+                const telefone = document.getElementById('telefoneCliente')?.value.trim();
+                const cidade = document.getElementById('cidadeCliente')?.value.trim();
+                const modelo = document.getElementById('modeloEstadia')?.value;
+                if (!nome || !telefone || !cidade || !modelo) { alert('Preencha todos os campos!'); return; }
+                this.nomeCliente = nome; this.telefoneCliente = telefone; this.cidadeCliente = cidade; this.modeloEstadia = modelo;
+                this.dataHora = new Date().toLocaleString('pt-BR'); this.currentView = 'quiz'; this.render();
+            }
+
+            proximaPergunta() {
+                const pergunta = this.perguntas[this.currentQuestion];
+                let resposta;
+                if (pergunta.tipo === 'radio') {
+                    const selecionado = document.querySelector('input[name="resposta"]:checked');
+                    if (!selecionado) { alert('Selecione uma resposta!'); return; }
+                    resposta = selecionado.value;
+                } else {
+                    const selecionados = document.querySelectorAll('input[name="resposta"]:checked');
+                    if (selecionados.length === 0) { alert('Selecione pelo menos uma opção!'); return; }
+                    resposta = Array.from(selecionados).map(cb => cb.value).join(', ');
+                }
+                const observacao = document.getElementById('observacao')?.value || '';
+                this.respostas[this.currentQuestion] = { pergunta: pergunta.texto, resposta: resposta, observacao: observacao };
+                if (this.currentQuestion === this.perguntas.length - 1) { this.currentView = 'resumo'; }
+                else { this.currentQuestion++; }
+                this.render();
+            }
+
+            finalizarPesquisa() { this.salvarAvaliacao(); this.currentView = 'final'; this.render(); }
+            voltarPergunta() { this.currentQuestion--; this.render(); }
+            novaAvaliacao() {
+                this.currentView = 'inicio'; this.currentQuestion = 0; this.respostas = [];
+                this.nomeCliente = ''; this.cidadeCliente = ''; this.telefoneCliente = ''; this.modeloEstadia = ''; this.render();
+            }
+            verPainel() { this.currentView = 'painel'; this.render(); }
+
+            renderPainel() {
+                const app = document.getElementById('app');
+                const stats = this.calcularEstatisticas();
+                app.innerHTML = `<div class="min-h-screen p-4 py-8 bg-gray-50"><div class="max-w-7xl mx-auto">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                        <div class="flex justify-between items-center flex-wrap gap-4">
+                            <div><h1 class="text-3xl font-bold text-blue-800">📊 Dashboard</h1><p class="text-gray-600 mt-2">Total: <strong>${this.avaliacoes.length}</strong></p></div>
+                            <div class="flex gap-3"><button onclick="app.exportarPDF()" class="bg-red-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-red-700 transition">📄 PDF</button>
+                            <button onclick="app.limparDados()" class="bg-red-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-red-700 transition">🗑️</button>
+                            <button onclick="app.novaAvaliacao()" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition">← Voltar</button></div>
+                        </div>
+                    </div>
+                    ${this.avaliacoes.length === 0 ? '<div class="bg-white rounded-2xl shadow-lg p-12 text-center"><div class="text-6xl mb-4">📭</div><p class="text-xl text-gray-600">Nenhuma avaliação ainda.</p></div>' : `
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                            <div class="bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl shadow-lg p-6 text-white">
+                                <div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold">👥 Status</h3><span class="text-3xl">🏷️</span></div>
+                                <div class="space-y-2">${Object.entries(stats.porStatus).map(([s, c]) => `<div class="bg-white bg-opacity-20 rounded-lg p-3">
+                                    <div class="flex justify-between"><span>${s}</span><span class="text-2xl font-bold">${c}</span></div>
+                                    <div class="mt-1 bg-white bg-opacity-30 rounded-full h-2"><div class="bg-white rounded-full h-2" style="width:${(c/this.avaliacoes.length)*100}%"></div></div>
+                                </div>`).join('')}</div>
+                            </div>
+                            <div class="bg-gradient-to-br from-green-500 to-green-700 rounded-2xl shadow-lg p-6 text-white">
+                                <div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold">🌍 Cidades</h3><span class="text-3xl">📍</span></div>
+                                <div class="space-y-2">${stats.topCidades.slice(0,5).map(([c,n])=>`<div class="bg-white bg-opacity-20 rounded-lg p-3"><div class="flex justify-between"><span class="truncate">${c}</span><span class="text-2xl font-bold">${n}</span></div></div>`).join('')}</div>
+                            </div>
+                            <div class="bg-gradient-to-br from-purple-500 to-purple-700 rounded-2xl shadow-lg p-6 text-white">
+                                <div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold">⭐ Satisfação</h3><span class="text-3xl">😊</span></div>
+                                <div class="space-y-3">
+                                    <div class="bg-white bg-opacity-20 rounded-lg p-3"><p class="text-sm">Recepção</p><p class="text-2xl font-bold">${stats.respostasMaisFrequentes[0]?.resposta||'N/A'}</p></div>
+                                    <div class="bg-white bg-opacity-20 rounded-lg p-3"><p class="text-sm">Experiência</p><p class="text-2xl font-bold">${stats.respostasMaisFrequentes[5]?.resposta||'N/A'}</p></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-6">📈 Análise por Pergunta</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">${this.perguntas.map((p,idx)=>{
+                                const rc = stats.respostasPorPergunta[idx];
+                                const total = Object.values(rc).reduce((a,b)=>a+b,0);
+                                return `<div class="border-2 border-gray-200 rounded-lg p-4">
+                                    <h3 class="font-bold text-gray-700 mb-3 flex items-center gap-2"><span class="text-2xl">${p.emoji}</span><span class="text-sm">${p.texto}</span></h3>
+                                    <div class="space-y-2">${Object.entries(rc).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([r,c])=>`<div>
+                                        <div class="flex justify-between mb-1"><span class="text-sm truncate">${r}</span><span class="font-bold text-blue-600">${c}</span></div>
+                                        <div class="bg-gray-200 rounded-full h-2"><div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-full h-2" style="width:${(c/total)*100}%"></div></div>
+                                    </div>`).join('')}</div>
+                                </div>`;
+                            }).join('')}</div>
+                        </div>
+                        <div class="bg-white rounded-2xl shadow-lg p-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-6">📋 Relatórios</h2>
+                            <div class="space-y-3">${this.avaliacoes.map((av,i)=>`<div class="border-2 border-gray-200 rounded-lg p-4 hover:border-blue-400 transition cursor-pointer" onclick="app.toggleRelatorio(${i})">
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center gap-4">
+                                        <div class="bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center"><span class="text-2xl">👤</span></div>
                                         <div><h3 class="font-bold text-gray-800">${av.nome}</h3><p class="text-sm text-gray-600">${av.cidade} • ${av.modeloEstadia} • ${av.dataHora}</p></div>
                                     </div>
                                     <div class="flex items-center gap-3">
@@ -82,113 +394,106 @@
                 }
             }
 
-            imprimirRelatorio(index) {
-                const av = this.avaliacoes[index];
+            exportarPDF() {
+                if (this.avaliacoes.length === 0) {
+                    alert('Não há avaliações para exportar!');
+                    return;
+                }
+                const porPagina = prompt(`Você tem ${this.avaliacoes.length} avaliações.\n\nQuantas avaliações por arquivo PDF?\n(Recomendado: 20 a 30)`, '25');
+                if (!porPagina || isNaN(porPagina) || porPagina <= 0) {
+                    alert('Operação cancelada ou valor inválido.');
+                    return;
+                }
+                const limite = parseInt(porPagina);
+                const totalArquivos = Math.ceil(this.avaliacoes.length / limite);
+                if (!confirm(`Serão gerados ${totalArquivos} arquivo(s) PDF.\n\nDeseja continuar?`)) {
+                    return;
+                }
+                alert('⏳ Iniciando geração dos PDFs...\n\nAguarde, isso pode levar alguns minutos.');
+                this.gerarPDFEmLotes(0, limite, totalArquivos);
+            }
+
+            gerarPDFEmLotes(inicio, limite, totalArquivos) {
+                const fim = Math.min(inicio + limite, this.avaliacoes.length);
+                const loteAtual = Math.floor(inicio / limite) + 1;
+                const avaliacoesLote = this.avaliacoes.slice(inicio, fim);
                 const elemento = document.createElement('div');
-                elemento.style.padding = '30px';
+                elemento.style.padding = '20px';
                 elemento.style.fontFamily = 'Arial, sans-serif';
-                elemento.style.fontSize = '14px';
-                elemento.style.maxWidth = '800px';
-                elemento.style.margin = '0 auto';
-
-                let html = `
-                    <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #1E3A8A;">
-                        <div style="font-size: 48px; margin-bottom: 10px;">🦕</div>
-                        <h1 style="color: #1E3A8A; font-size: 28px; margin: 0;">Itaipulândia - Pesquisa de Satisfação</h1>
-                        <p style="color: #666; font-size: 12px; margin: 10px 0;">Relatório Individual #${index + 1}</p>
-                        <p style="color: #666; font-size: 11px; margin: 5px 0;">Gerado em ${new Date().toLocaleString('pt-BR')}</p>
-                    </div>
-
-                    <div style="background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%); color: white; padding: 20px; margin-bottom: 25px; border-radius: 12px;">
-                        <h2 style="margin: 0 0 15px 0; font-size: 22px;">👤 Dados do Cliente</h2>
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <tr>
-                                <td style="padding: 8px; color: #E3F2FD; font-weight: bold;">Nome:</td>
-                                <td style="padding: 8px; color: white;">${av.nome}</td>
-                                <td style="padding: 8px; color: #E3F2FD; font-weight: bold;">Telefone:</td>
-                                <td style="padding: 8px; color: white;">${av.telefone}</td>
+                elemento.style.fontSize = '12px';
+                let html = `<div style="text-align:center;margin-bottom:25px;padding-bottom:15px;border-bottom:3px solid #1E3A8A;">
+                    <h1 style="color:#1E3A8A;font-size:24px;margin:0;">Itaipulândia - Pesquisa de Satisfação</h1>
+                    <p style="color:#666;font-size:11px;margin:8px 0;">Relatório gerado em ${new Date().toLocaleString('pt-BR')}</p>
+                    <p style="color:#666;font-weight:bold;font-size:12px;margin:5px 0;">Arquivo ${loteAtual} de ${totalArquivos} | Avaliações ${inicio + 1} a ${fim} de ${this.avaliacoes.length}</p>
+                </div>`;
+                avaliacoesLote.forEach((av, index) => {
+                    const numeroGlobal = inicio + index + 1;
+                    html += `<div style="border:2px solid #ddd;padding:15px;margin-bottom:20px;border-radius:10px;page-break-inside:avoid;background:#f9f9f9;">
+                        <div style="background:linear-gradient(135deg,#1E3A8A 0%,#3B82F6 100%);color:white;padding:10px 15px;margin:-15px -15px 15px -15px;border-radius:8px 8px 0 0;">
+                            <strong style="font-size:16px;">📋 Avaliação #${numeroGlobal}</strong>
+                        </div>
+                        <table style="width:100%;font-size:11px;margin-bottom:12px;border-collapse:collapse;">
+                            <tr style="background:#e3f2fd;">
+                                <td style="padding:6px;border:1px solid #ddd;"><strong>Nome:</strong></td>
+                                <td style="padding:6px;border:1px solid #ddd;">${av.nome}</td>
+                                <td style="padding:6px;border:1px solid #ddd;"><strong>Telefone:</strong></td>
+                                <td style="padding:6px;border:1px solid #ddd;">${av.telefone}</td>
                             </tr>
                             <tr>
-                                <td style="padding: 8px; color: #E3F2FD; font-weight: bold;">Cidade:</td>
-                                <td style="padding: 8px; color: white;">${av.cidade}</td>
-                                <td style="padding: 8px; color: #E3F2FD; font-weight: bold;">Status:</td>
-                                <td style="padding: 8px; color: white;">${av.modeloEstadia}</td>
+                                <td style="padding:6px;border:1px solid #ddd;"><strong>Cidade:</strong></td>
+                                <td style="padding:6px;border:1px solid #ddd;">${av.cidade}</td>
+                                <td style="padding:6px;border:1px solid #ddd;"><strong>Status:</strong></td>
+                                <td style="padding:6px;border:1px solid #ddd;">${av.modeloEstadia}</td>
                             </tr>
-                            <tr>
-                                <td style="padding: 8px; color: #E3F2FD; font-weight: bold;">Data/Hora:</td>
-                                <td colspan="3" style="padding: 8px; color: white;">${av.dataHora}</td>
+                            <tr style="background:#e3f2fd;">
+                                <td style="padding:6px;border:1px solid #ddd;"><strong>Data/Hora:</strong></td>
+                                <td colspan="3" style="padding:6px;border:1px solid #ddd;">${av.dataHora}</td>
                             </tr>
                         </table>
-                    </div>
-
-                    <div>
-                        <h2 style="color: #1E3A8A; font-size: 20px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #3B82F6;">📝 Respostas da Pesquisa</h2>
-                `;
-
-                av.respostas.forEach((resp, i) => {
-                    html += `
-                        <div style="margin-bottom: 25px; padding: 18px; background: #F8FAFC; border-left: 5px solid #3B82F6; border-radius: 8px; page-break-inside: avoid;">
-                            <div style="display: flex; align-items: center; margin-bottom: 12px;">
-                                <span style="background: #3B82F6; color: white; padding: 5px 12px; border-radius: 20px; font-weight: bold; margin-right: 12px; font-size: 13px;">${i + 1}</span>
-                                <p style="margin: 0; font-weight: bold; color: #1E3A8A; font-size: 15px;">${resp.pergunta}</p>
-                            </div>
-                            <div style="margin-left: 40px; padding: 12px; background: white; border-radius: 6px; border-left: 3px solid #60A5FA;">
-                                <p style="margin: 0; color: #1F2937; font-size: 14px; line-height: 1.6;">
-                                    <strong style="color: #3B82F6;">→</strong> ${resp.resposta}
-                                </p>
-                            </div>
-                            ${resp.observacao ? `
-                                <div style="margin: 12px 0 0 40px; padding: 12px; background: #FEF3C7; border-left: 3px solid #F59E0B; border-radius: 6px;">
-                                    <p style="margin: 0; color: #92400E; font-size: 13px; font-style: italic;">
-                                        💭 <strong>Observação:</strong> ${resp.observacao}
-                                    </p>
-                                </div>
-                            ` : ''}
-                        </div>
-                    `;
+                        <div style="border-top:2px solid #3B82F6;padding-top:12px;">
+                            <h3 style="color:#1E3A8A;font-size:13px;margin:0 0 10px 0;">📝 Respostas:</h3>`;
+                    av.respostas.forEach((resp, i) => {
+                        html += `<div style="margin:10px 0;padding:10px;background:white;border-radius:6px;border-left:4px solid #3B82F6;">
+                            <p style="font-weight:bold;color:#1E3A8A;font-size:11px;margin:0 0 5px 0;">
+                                <span style="background:#3B82F6;color:white;padding:2px 8px;border-radius:12px;margin-right:5px;">${i + 1}</span>${resp.pergunta}
+                            </p>
+                            <p style="margin:5px 0 0 15px;color:#333;font-size:11px;line-height:1.5;"><strong>→</strong> ${resp.resposta}</p>
+                            ${resp.observacao ? `<p style="margin:8px 0 0 15px;padding:8px;background:#fff9e6;border-left:3px solid #ffc107;color:#666;font-style:italic;font-size:10px;border-radius:4px;">💭 <strong>Observação:</strong> ${resp.observacao}</p>` : ''}
+                        </div>`;
+                    });
+                    html += `</div></div>`;
                 });
-
-                html += `
-                    </div>
-                    <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #E5E7EB; text-align: center; color: #6B7280; font-size: 12px;">
-                        <p style="margin: 0;">Itaipulândia Parque Aquático © ${new Date().getFullYear()}</p>
-                        <p style="margin: 5px 0 0 0;">Sua opinião é muito importante! 💙</p>
-                    </div>
-                `;
-
                 elemento.innerHTML = html;
                 document.body.appendChild(elemento);
-
+                const nomeArquivo = totalArquivos > 1 
+                    ? `Pesquisa_Itaipulandia_Parte${loteAtual}de${totalArquivos}_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.pdf`
+                    : `Pesquisa_Itaipulandia_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.pdf`;
                 const opcoes = {
-                    margin: [15, 15, 15, 15],
-                    filename: `Relatorio_${av.nome.replace(/\s+/g, '_')}_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.pdf`,
+                    margin: [10, 10, 10, 10],
+                    filename: nomeArquivo,
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { 
-                        scale: 2,
-                        useCORS: true,
-                        logging: false,
-                        windowWidth: 900
-                    },
-                    jsPDF: { 
-                        unit: 'mm', 
-                        format: 'a4', 
-                        orientation: 'portrait'
-                    },
-                    pagebreak: { mode: ['avoid-all', 'css'] }
+                    html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: 1024 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
                 };
-
                 html2pdf().set(opcoes).from(elemento).save().then(() => {
                     document.body.removeChild(elemento);
-                    alert('✅ Relatório gerado com sucesso!');
+                    const proximoInicio = fim;
+                    if (proximoInicio < this.avaliacoes.length) {
+                        setTimeout(() => {
+                            alert(`✅ Arquivo ${loteAtual} de ${totalArquivos} concluído!\n\n⏳ Gerando próximo arquivo...`);
+                            this.gerarPDFEmLotes(proximoInicio, limite, totalArquivos);
+                        }, 1000);
+                    } else {
+                        alert(`🎉 Exportação concluída!\n\n${totalArquivos} arquivo(s) PDF gerado(s) com sucesso!`);
+                    }
                 }).catch(error => {
                     console.error('Erro ao gerar PDF:', error);
                     document.body.removeChild(elemento);
-                    alert('❌ Erro ao gerar o relatório. Tente novamente.');
+                    alert(`❌ Erro ao gerar arquivo ${loteAtual}.\n\nTente com menos avaliações por arquivo.`);
                 });
             }
         }
-        }
-
         const app = new QuizItaipulandia();
     </script>
 </body>
